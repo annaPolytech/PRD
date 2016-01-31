@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "iloparmipopt.process.master", "iloparmipopt.process.master.vcxproj", "{97C1D4A3-ADD2-4A42-8812-FF81464FBCFF}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "iloparmipopt.process.userfunc", "iloparmipopt.process.userfunc.vcxproj", "{5918D0C7-6117-4E6D-9815-738B89C8117F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E33BB192-F83E-4850-81F1-48E52ADCD1B8}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E33BB192-F83E-4850-81F1-48E52ADCD1B8}.Debug|Win32.Build.0 = Debug|Win32
+		{E33BB192-F83E-4850-81F1-48E52ADCD1B8}.Release|Win32.ActiveCfg = Release|Win32
+		{E33BB192-F83E-4850-81F1-48E52ADCD1B8}.Release|Win32.Build.0 = Release|Win32
+		{33B4EA06-EF8F-4EF1-9158-9B8B69940A42}.Debug|Win32.ActiveCfg = Debug|Win32
+		{33B4EA06-EF8F-4EF1-9158-9B8B69940A42}.Debug|Win32.Build.0 = Debug|Win32
+		{33B4EA06-EF8F-4EF1-9158-9B8B69940A42}.Release|Win32.ActiveCfg = Release|Win32
+		{33B4EA06-EF8F-4EF1-9158-9B8B69940A42}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,110 @@
+#include <stdio.h>
+#include <iostream>
+#include "donnees.h"
+
+unsigned int NbJobs=20;
+unsigned int NbMachines =3;
+//TData Data; 
+TData tabStructure[MaxMachines];
+TData2 dataJob;
+
+inline unsigned int id(unsigned int uiMachine){return tabStructure[uiMachine].identifiant;}
+inline unsigned int ri(unsigned int uiMachine, unsigned int uiJob) {return tabStructure[uiMachine].ri[uiJob];}
+inline unsigned int pi(unsigned int uiMachine, unsigned int uiJob) {return tabStructure[uiMachine].pi[uiJob];}
+inline unsigned int di(unsigned int uiMachine, unsigned int uiJob) {return tabStructure[uiMachine].di[uiJob];}
+inline unsigned int Di(unsigned int uiMachine, unsigned int uiJob, unsigned int uiMachine2) {return tabStructure[uiMachine].Di[uiJob][uiMachine2];}
+
+inline unsigned int riG(unsigned int uiJob) {return dataJob.riG[uiJob];}
+inline unsigned int diG(unsigned int uiJob) {return dataJob.diG[uiJob];}
+
+void ReadData()
+{
+ // Reading of the data in the file donnees.pb
+ FILE *FInG;
+ FILE *FIn;
+ unsigned int temp,uiLoop,riG, diG, ri,pi,di,uiLoop2,uiLoop3,j;
+ unsigned int Di2;
+
+ // Lecture du fichier general
+
+ FInG=fopen("donneesG.pb","rt");
+  // on lit la 1ere
+ fscanf(FIn,"%u %u\n",&NbJobs,&temp);
+ for(uiLoop=0;uiLoop<NbJobs;uiLoop++)
+ {
+	 fscanf(FIn,"%u %u\n",&riG,&diG);
+	 uiLoop2=0;
+	 while (uiLoop2<uiLoop && (ri>dataJob.riG[uiLoop2] || (ri==dataJob.riG[uiLoop2] && di>dataJob.diG[uiLoop2]))) uiLoop2++;
+	 for (uiLoop3=uiLoop;uiLoop3>uiLoop2;uiLoop3--)
+	 {
+	 	 dataJob.riG[uiLoop3]=dataJob.riG[uiLoop3-1];
+		 dataJob.diG[uiLoop3]=dataJob.diG[uiLoop3-1];
+	 }
+	 dataJob.riG[uiLoop2]=ri;
+	 dataJob.diG[uiLoop2]=di;
+ }
+ fclose(FInG);
+
+ for(int i=0;i<NbJobs;i++){
+	 printf("%u %u\n",dataJob.riG[i],dataJob.diG[i] );
+ }
+
+ // lecture du fichier job / machine
+
+ FIn=fopen("donnees.pb","rt");
+ // pour chaque machine
+ for(j=0;j<NbMachines;j++)
+ {
+	 // on lit la 1ere
+	 fscanf(FIn,"%u %u\n",&NbJobs,&temp);
+	 for(uiLoop=0;uiLoop<NbJobs;uiLoop++)
+	 {
+		 fscanf(FIn,"%u %u %u ",&ri,&di,&pi);
+		 unsigned int Di [MaxMachines];
+		 for (int i=0;i<NbMachines ;i++){
+			fscanf(FIn,"%u ",&Di2);
+			Di[i]=Di2;
+		 }
+		 fscanf(FIn,"\n");
+
+		 uiLoop2=0;
+		 while (uiLoop2<uiLoop && (ri>tabStructure[j].ri[uiLoop2] || (ri==tabStructure[j].ri[uiLoop2] && di>tabStructure[j].di[uiLoop2]))) uiLoop2++;
+		 for (uiLoop3=uiLoop;uiLoop3>uiLoop2;uiLoop3--)
+		 {
+			 tabStructure[j].ri[uiLoop3]=tabStructure[j].ri[uiLoop3-1];
+			 tabStructure[j].pi[uiLoop3]=tabStructure[j].pi[uiLoop3-1];
+			 tabStructure[j].di[uiLoop3]=tabStructure[j].di[uiLoop3-1];
+			for (int i=0;i<NbMachines ;i++){
+				tabStructure[j].Di[uiLoop3][i]=tabStructure[j].Di[uiLoop3-1][i];
+			}
+			 //Data.Di[uiLoop3]=Data.Di[uiLoop3-1];
+			 
+		 }
+		 tabStructure[j].ri[uiLoop2]=ri;
+		 tabStructure[j].pi[uiLoop2]=pi;
+		 tabStructure[j].di[uiLoop2]=di;
+		 for (int i=0;i<NbMachines ;i++){
+			 tabStructure[j].Di[uiLoop2][i]=Di[i];
+		}		 
+	 }
+ }
+ fclose(FIn);
+/* printf ("ri %u \n", ri);
+printf ("riDonne %u %u %u %u %u %u \n", tabStructure[1].ri[0], tabStructure[1].pi[0], tabStructure[1].di[0], tabStructure[1].Di[0][0], tabStructure[1].Di[0][1], tabStructure[1].Di[0][2]);
+printf ("riDonne %u %u %u %u %u %u \n", tabStructure[1].ri[1], tabStructure[1].pi[1], tabStructure[1].di[1], tabStructure[1].Di[1][0], tabStructure[1].Di[1][1], tabStructure[1].Di[1][2]);
+printf ("riDonne %u %u %u %u %u %u \n", tabStructure[1].ri[2], tabStructure[1].pi[2], tabStructure[1].di[2], tabStructure[1].Di[2][0], tabStructure[1].Di[2][1], tabStructure[1].Di[2][2]);
+printf ("riDonne %u %u %u %u %u %u \n", tabStructure[1].ri[3], tabStructure[1].pi[3], tabStructure[1].di[3], tabStructure[1].Di[3][0], tabStructure[1].Di[3][1], tabStructure[1].Di[3][2]);
+ */// Writting of the data into the format of Carlier's Branch and Bound (file donnees.dat)
+ FILE *FOut;
+ FOut=fopen("donnees.dat","wt");
+ for(int uiMach=0;uiMach<NbMachines;uiMach++)
+ {	
+	for(uiLoop=0;uiLoop<NbJobs;uiLoop++)
+	{
+		fprintf(FOut,"%d %d %d\n",tabStructure[uiMach].ri[uiLoop],tabStructure[uiMach].pi[uiLoop],tabStructure[uiMach].di[uiLoop]);
+	}
+ }
+ fclose(FOut);
+
+
+}

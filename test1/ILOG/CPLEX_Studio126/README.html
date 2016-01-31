@@ -1,0 +1,206 @@
+ <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+
+<html>
+<HEAD>
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>IBM ILOG CPLEX Optimization Studio V12.6.0</TITLE>
+
+</HEAD>
+
+
+<body>
+<h1>IBM ILOG CPLEX Optimization Studio V12.6.0</h1>
+
+<p>IBM&reg; ILOG&reg; CPLEX&reg; Optimization Studio est le moyen le plus rapide de créer des modèles d'optimisation
+efficaces et des applications de pointe permettant de traiter les multiples problèmes de planification et
+d'ordonnancement. Avec son environnement de développement intégré, son langage de modélisation descriptive, ses outils intégrés
+et ses solveurs avancés, traitant les problèmes de programmation mathématique et les problèmes
+de programmation par contraintes, il prend en charge le processus complet de développement et de résolution des modèles.</p>
+
+<p>CPLEX Optimization Studio comprend plusieurs composants. Certains composants ne sont pas disponibles sur toutes les plateformes.  
+Pour en savoir plus, rendez-vous sur la page relative à la configuration système requise qui est décrite en détail ci-dessous. 
+Chacun des composants est placé dans un sous-dossier (ou sous-répertoire pour UNIX/Linux) de l'emplacement
+d'installation. 
+Les API et les connecteurs pour chaque composant se trouvent dans le sous-dossier (sous-répertoire) de ce composant.
+Par exemple, les connecteurs MATLAB, Excel et AMPL pour CPLEX se trouvent dans le sous-dossier (sous-répertoire) <code>cplex</code>.
+</p>
+<ul>
+<li><code>opl</code> : environnement de modélisation OPL et environnement de développement intégré (IDE)</li>
+<li><code>cplex</code> : optimiseurs CPLEX incluant les optimiseurs de simplexe, de barrière et mixte en nombres entiers</li>
+<li><code>cpoptimizer</code> : optimiseur PPC (CP Optimizer), qui utilise la technologie de programmation par contraintes</li>
+<li><code>concert</code> : couche de modélisation C++ à utiliser avec les optimiseurs</li>
+</ul>
+<p>Autres répertoires :</p>
+<ul>
+<li><code>doc</code> : version HTML de la documentation, ainsi que des tutoriels au format PDF</li>
+<li><code>jre</code> : environnement d'exécution Java utilisé pour les processus d'installation et de
+désinstallation (sur les plateformes dépourvues d'IDE OPL) </li>
+<li><code>license</code> : documents de contrat de licence</li>
+<li><code>properties</code> : informations d'inventaire</li>
+<li><code>Uninstall</code> : informations nécessaires pour la désinstallation du produit</li>
+</ul>
+
+<p><b>SOMMAIRE</b></p>
+<ul>
+<li><a href="#relnotes">Notes sur l'édition</a></li>
+<li><a href="#infocenter">Centre de documentation</a></li>
+<li><a href="#productsupport">Support technique du produit</a></li>
+<li><a href="#developer_works">developerWorks</a></li>
+<li><a href="#sys_reqs">Configuration requise</a></li>
+<li><a href="#install_win">Installation sous Windows</a></li>
+<li><a href="#install_x">Installation sous UNIX/Linux</a></li>
+<li><a href="#silentinstall">Installation en mode silencieux de CPLEX Optimization Studio</a></li>
+<li><a href="#uninstall">Désinstallation de CPLEX Optimization Studio</a></li>
+<li><a href="#issuesaddressed">Problèmes corrigés dans la version 12.6.0</a></li>
+</ul>
+<HR>
+<h2><a name="relnotes">Notes sur l'édition</a></h2>
+<p>Reportez-vous aux notes sur l'édition pour une description complète des améliorations et
+des nouvelles fonctionnalités. Pour accéder aux notes de l'édition et aux autres documentations :</p>
+<ul>
+<li>Sous Windows : <b>Démarrer &gt; Tous les programmes &gt; IBM ILOG &gt; CPLEX Optimization Studio 12.6.0 &gt; Documentation</b></li>
+<li>Sous UNIX : La documentation est accessible à partir de <code>[rép_install]/doc/html/en-US/documentation.html</code></li>
+<li>Sous Linux : Pour accéder à la documentation : </li>
+<ul>
+<li><code>oplide -nosplash -displayHelp opl</code></li>
+<li><code>oplide -nosplash -displayHelp cplex</code></li>
+<li><code>oplide -nosplash -displayHelp cpo</code></li>
+<li><code>oplide -nosplash -shutdownHelp</code></li>
+</ul>
+</ul>
+
+<HR>
+<h2><a name="infocenter">Centre de documentation</a></h2>
+<p>La documentation mise à jour de la version 12.6.0 est également disponible en ligne dans le
+<a href="http://pic.dhe.ibm.com/infocenter/cosinfoc/v12r6/index.jsp">Centre de documentation d'IBM ILOG CPLEX
+Optimization Studio</a>. Le centre de documentation contient les versions PDF de certains des manuels.</p>
+
+<HR>
+<h2><a name="productsupport">Support technique du produit</a></h2>
+<p>Pour des informations de support, des conseils et des nouvelles concernant
+le produit, consultez la page <a href="http://www-947.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_ILOG_CPLEX_Optimization_Studio">Support home</a>.</p>
+
+<HR>
+<h2><a name="developer_works">developerWorks</a></h2>
+<p>Participez aux discussions techniques sur le forum ILOG Optimization sur <a href="http://www.ibm.com/developerworks/forums/category.jspa?categoryID=260">developerWorks</a>.  Rejoignez la communauté ILOG Optimization
+<a href="https://www.ibm.com/developerworks/mydeveloperworks/groups/service/html/communityview?communityUuid=3a298dfa-4726-466f-9cee-cbc6221b8bba">ici</a>. </p>
+
+<HR>
+<h2><a name="sys_reqs">Configuration requise</a></h2>
+<p>Pour des informations détaillées sur la configuration système requise et les plateformes prises en charge, consultez
+le document <a href="https://www-304.ibm.com/support/docview.wss?uid=swg27019100">Detailed System Requirements for IBM
+ILOG CPLEX Optimization Studio</a>.</p>
+<h4>Note pour les utilisateurs AIX</h4>
+<p>Les versions d'IBM ILOG CPLEX Optimization Studio optimisées pour l'architecture Power 7 se trouvent dans les
+sous-répertoires <code>power7-32_aix</code> et <code>power7-64_aix</code> des répertoires des
+composants. Les bibliothèques et les fichiers exécutables contenus dans ces sous-répertoires fonctionnent seulement sur la plateforme Power 7.  Les applications C ou C++ créées avec ces bibliothèques doivent utiliser les compilateurs IBM XL C/C++ for AIX, version 11.1 ou ultérieure.</p>
+
+<HR>
+<h2><a name="install_win">Installation sous Windows</a></h2>
+<p>Sous Windows, l'emplacement d'installation par défaut d'IBM ILOG CPLEX Optimization Studio est :</p>
+<code>C:\Program Files\IBM\ILOG\CPLEX_Studio[edition]126</code>
+<p>Pour une installation Windows 32 bits sur une plateforme Windows 64 bits, l'emplacement d'installation par défaut est :</p>
+<code>C:\Program Files (x86)\IBM\ILOG\CPLEX_Studio[edition]126</code>
+<p>où [édition] peut être :</br>
+   * Preview Edition</br>
+   * vide, pour l'édition commerciale standard</br>
+Lors de l'installation, vous avez peut-être sélectionné un emplacement différent (<code>[rép_install]</code>).</p>
+
+<h4>IDE</h4>
+<p>Vous pouvez lancer l'IDE en utilisant une entrée du menu Démarrer :</br>
+<b>Démarrer &gt; Tous les programmes &gt; IBM ILOG &gt; CPLEX Optimization Studio [édition] 12.6.0 &gt; CPLEX Studio IDE</b></p>
+<p>où [édition] peut être :</br>
+   * Preview Edition</br>
+   * vide, pour l'édition commerciale standard</p>
+
+<h4>Informations complémentaires</h4>
+<p>Pour plus d'informations sur la fonctionnalité CPLEX sur la plateforme Windows, voir <code>[rép_install]\cplex\readmeWindows.html</code>. </p>
+
+<p>Pour plus d'informations sur la fonctionnalité CP Optimizer sur la plateforme Windows, voir <code>[rép_install]\cpoptimizer\readmeWindows.html</code>. </p>
+
+<HR>
+<h2><a name="install_x">Installation sous UNIX/Linux</a></h2>
+<p>Le programme d'installation pour UNIX/Linux est un fichier exécutable. Pour lancer
+une installation, vous devez donner à ce fichier un droit d'exécution et vous
+devez l'exécuter depuis une ligne de commande. 
+Par exemple, lancez la commande <code>./&lt;nominstall&gt;.bin</code> où <code>&lt;nominstall&gt;</code> est le nom du
+programme d'installation. Vous pouvez donner l'autorisation d'exécution à un fichier avec la commande <code>chmod u+x &lt;nom_installation&gt;.bin</code>.</p>
+<p>Sous UNIX, l'emplacement d'installation par défaut d'IBM ILOG CPLEX Optimization Studio est : </p>
+<code>/opt/IBM/ILOG/CPLEX_Studio[edition]126</code>
+<p>Sous Linux, l'emplacement d'installation par défaut d'IBM ILOG CPLEX Optimization Studio est : </p>
+<code>/opt/ibm/ILOG/CPLEX_Studio[edition]126</code>
+<p>où [édition] peut être :</br>
+   * Preview Edition</br>
+   * vide, pour l'édition commerciale standard</p>
+
+<p>Lors de l'installation, vous avez peut-être sélectionné un emplacement différent (<code>[rép_install]</code>).</p>
+
+<h4>IDE</h4>
+<p>Vous pouvez lancer l'IDE depuis un terminal Linux. </br>
+1. Ouvrez une fenêtre de terminal</br>
+2. Passez dans le répertoire <code>[rép_install]/opl/oplide</code></br>
+3. Entrez la commande <code>./oplide</code></p>
+
+<p>Vous pouvez également entrer le chemin d'accès absolu à partir de n'importe quel emplacement du terminal : </br>
+<code>[rép_install]/opl/oplide/oplide</code></p>
+
+<h4>Informations complémentaires</h4>
+<p>Pour plus d'informations sur la fonctionnalité CPLEX sur les plateformes UNIX/Linux,
+voir <code>[rép_install]/cplex/readmeUNIX.html</code>.</p>
+
+<p>Pour plus d'informations sur la fonctionnalité CP Optimizer sur les plateformes UNIX/Linux, voir
+<code>[rép_install]/cpoptimizer/readmeUNIX.html</code>.</p>
+
+<HR>
+<h2><a name="silentinstall">Installation en mode silencieux de CPLEX Optimization Studio</a></h2>
+<p>Veuillez vous référer à la documentation
+<a href ="http://pic.dhe.ibm.com/infocenter/cosinfoc/v12r6/topic/ilog.odms.studio.help/Optimization_Studio/topics/td_silent_install.html">
+<i>Installation en mode silencieux de CPLEX Optimization Studio</a></i>.</p>
+
+<HR>
+<h2><a name="uninstall">Désinstallation de CPLEX Optimization Studio</a></h2>
+<h2></h2>
+<p>Veuillez vous référer à la documentation
+<a href="http://pic.dhe.ibm.com/infocenter/cosinfoc/v12r6/topic/ilog.odms.studio.help/Optimization_Studio/topics/td_uninstall.html">
+<i>Désinstallation de CPLEX Optimization Studio</a></i>.</p>
+
+<HR>
+<h2><a name="issuesaddressed">Problèmes corrigés dans la version 12.6.0</a></h2>
+
+<table border="1" cellpadding="5">
+<tr><td><b>Numéro d'APAR</b></td><td><b>Description</b></td></tr>
+
+<tr><td></td><td><b>CPLEX Optimizer</b></td></tr>
+<tr><td>RS01342</td><td>Dans de rares cas, CPLEX plante lorsqu'il effectue une séparation forte sur un modèle à la fois numériquement instable
+et incluant des variables indicatrices. </td></tr>
+<tr><td>RS01376</td><td><code>CPXaddcols</code> et <code>CPXnewcols</code> ne traitent pas correctement les
+bornes infinies spécifiées avec des valeurs supérieures à <code>CPX_INFBOUND = 1e+20</code>.</td></tr>
+<tr><td>RS01381</td><td>Le support par CPLEX des bornes non binaires sur des variables binaires peut entraîner l'application
+d'une heuristique avant le noeud racine pour fournir une solution avec des valeurs non binaires. </td></tr>
+<tr><td>RS01402</td><td>Avec une instance de PLMNE (programme linéaire mixte en nombres entiers) mettant en jeu
+d'assez grands coefficients, CPLEX retourne des valeurs de solution qui violent leur borne inférieure de 0. </td></tr>
+<tr><td>RS01435</td><td>La création d'objets <code>IloCplex</code> vides en C++ ou Java consomme 4 Mo, ce qui entraîne
+une consommation excessive de mémoire dans les applications avec de nombreux objets <code>IloCplex</code> (en particulier pour les
+petits modèles). </td></tr>
+<tr><td>RS01439</td><td>L'API Java ne devrait pas émettre d'exception lorsque des pointeurs Null sont fournis pour les tableaux
+de bornes inférieures et de bornes supérieures dans les routines d'analyse de sensibilité. </td></tr>
+<tr><td>RS01441</td><td>L'utilisation d'un rappel de séparation (branch callback) sur un modèle continu n'appelle pas de
+rappel de séparation. </td></tr>
+<tr><td>RS01443</td><td>Dans de rares cas, la prérésolution relaxe incorrectement une contrainte. </td></tr>
+<tr><td>RS01445</td><td><code>CPXrefineconflictext</code> (et les routines d'API qui l'appellent) ne recalcule pas
+le conflit lorsqu'elle est appelée à nouveau avec de nouvelles priorités. </td></tr>
+
+<tr><td></td><td><b>OPL</b></td></tr>		   
+<tr><td>RS01382</td><td>Une erreur "oplrun is not responding" (oplrun ne répond pas) se produit lorsqu'un ensemble Null est passé en entrée. </td></tr>
+<tr><td>RS01389</td><td>Lorsque vous appelez <code>model.end()</code>, il arrive qu'un plantage se produise. </td></tr>
+<tr><td>RS01390</td><td>Un modèle n'est pas entièrement généré lorsqu'une variable de chaîne est utilisée pour la segmentation
+dans les multimodèles. </td></tr>
+<tr><td>RS01396</td><td>Une erreur d'extraction se produit lorsqu'une contrainte <code>not in</code> est utilisée avec un
+ensemble de chaînes. </td></tr>
+<tr><td>RS01416</td><td>Une expression d'agrégation impose parfois une borne incorrecte durant la linéarisation. </td></tr>
+<tr><td>RS01444</td><td>Lorsque la base de données Access est mise à jour avec des données de type chaîne, les valeurs ne sont pas
+mises à jour ; seules quelques lignes sont mises à jour. Les autres lignes sont Null. </td></tr>
+<tr><td>RS01446</td><td>Altération de la mémoire utilisée pour Concert en raison d'une multiplication interne par 0.</td></tr>
+</table>
+</body>
+</html>
