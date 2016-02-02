@@ -26,6 +26,7 @@ extern unsigned int NbMachines;
 
 
 void ReadData();
+void ReadData2();
 // This function reads the data and write them into the format expected by the PSE of Carlier (Rivereau implementation)
 // The read data are put into the structure Data and are sorted by increasing values of ri (break ties by increasing di)
 

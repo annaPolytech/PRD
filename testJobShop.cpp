@@ -17,7 +17,7 @@ using namespace std;
 #define TEST false
 
 #define NbMaxMachine 3
-#define NbMaxJob 5000
+#define NbMaxJob 20
 #define depart 500   // Min number of jobs
 #define taille_max 5000   // Max number of jobs
 #define pas 500		// Step in the loop on the number of jobs
@@ -47,46 +47,29 @@ int somme(long int *in,int taille)
 
 void generer(long int nbtrav, long int nbmach, double alpha,double beta,double a)
 {
-	 long int i,k,j;
-	 long int r,p,d,ri[NbMaxJob],di[NbMaxJob],pi[NbMaxJob],Di[NbMaxMachine][NbMaxJob][NbMaxMachine];
+	
+	long int i,k,j;
+	 long int r,p,d,riG[NbMaxJob], diG[NbMaxJob], ri[NbMaxJob],di[NbMaxJob],pi[NbMaxJob],Di[NbMaxJob][NbMaxJob][NbMaxMachine];
 	 int sum_pi;
 	 FILE *fichier;
 
 	 for(i=0;i<NbMaxMachine;i++)
+	 {
 		for(j=0;j<NbMaxJob;j++)
+		{
 			for(k=0;k<NbMaxMachine;k++)
-				Di[i][j][k]=0;
-
-	 // création du fichier général
-	 FILE *fichierGenerale;
-	 fichierGenerale=fopen("donneesG.pb","wt");
-
-	 for(i=0;i<nbtrav;i++)
-		 {
-			int rlb,rub;
-			rlb=0;
-			rub=alpha*sum_pi;
-			r=((float)rand()/(float)RAND_MAX)*(rub-rlb)+rlb;
-			ri[i]=r;
-		 }
-	for(i=0;i<nbtrav;i++)
-		 {
-			int dlb,dub;
-			dlb=(1-beta)*a*sum_pi;
-			dub=a*sum_pi;
-			d=((float)rand()/(float)RAND_MAX)*(dub-dlb)+dlb;
-			if(d<ri[i]+pi[i])
 			{
-				d=ri[i]+sum_pi/nbtrav*2+pi[i];
+				Di[i][j][k]=0;
 			}
-			di[i]=d;
-		 }
-		fprintf(fichierGenerale,"%d %d\n",nbtrav,2);
-		 for (i=0;i<nbtrav;i++)
-		 {
-			fprintf(fichierGenerale,"%ld %ld\n",ri[i],di[i]);
-		 }
-		 fclose(fichierGenerale);
+		}
+	 }
+
+	 for(i=0;i<NbMaxJob;i++){
+		ri[i] = 0;
+		di[i] = 0;
+		pi[i] = 0;
+	 }
+	 
 		 //////////////////////////////////////////
 
 		 // création du fichier des jobs par machine
@@ -102,15 +85,27 @@ void generer(long int nbtrav, long int nbmach, double alpha,double beta,double a
 			p=((float)rand()/(float)RAND_MAX)*49+1;
 			pi[i]=p;
 		 }
+		 sum_pi=somme(pi,nbtrav);
 		 // Génération des dates de début ri
 		 for(i=0;i<nbtrav;i++)
 		 {
-			ri[i]=0;
+			int rlb,rub;
+			rlb=0;
+			rub=alpha*sum_pi;
+			r=((float)rand()/(float)RAND_MAX)*(rub-rlb)+rlb;
+			ri[i]=r;
 		 }
-		 // Génération des dates de fin di
 		 for(i=0;i<nbtrav;i++)
 		 {
-			di[i]=0;
+			int dlb,dub;
+			dlb=(1-beta)*a*sum_pi;
+			dub=a*sum_pi;
+			d=((float)rand()/(float)RAND_MAX)*(dub-dlb)+dlb;
+			if(d<ri[i]+pi[i])
+			{
+				d=ri[i]+sum_pi/nbtrav*2+pi[i];
+			}
+			di[i]=d;
 		 }
 		 // Génération des délais Di
 		 for(i=0;i<nbtrav;i++)
@@ -169,6 +164,10 @@ void generer(long int nbtrav, long int nbmach, double alpha,double beta,double a
  
 	 fclose(fichier);
 
+	 ////////////////////////////////////////////////////////////
+
+	 
+	 ////////////////////////////////////////////////////////////
  	filebuf fichier2;
 	filebuf *ouvert=fichier2.open("DONNEES.DAT",ios_base::out);
 	if(!ouvert)
@@ -185,6 +184,42 @@ void generer(long int nbtrav, long int nbmach, double alpha,double beta,double a
 		}
 	}
 	fichier2.close();
+
+}
+
+void genererGenerale(long int nbtrav, long int nbmach, double alpha,double beta,double a)
+{
+	long int i,k,j;
+	 long int r,p,d,riG[NbMaxJob], diG[NbMaxJob];
+	 int sum_pi;
+	// création du fichier général
+	 FILE *fichierGenerale;
+	 fichierGenerale=fopen("donneesG.pb","wt");
+
+
+	 for(i=0;i<nbtrav;i++)
+	{
+		riG[i]=99999999999999999;
+		diG[i]=0;
+		for(j=0;j<nbmach;j++)
+		{
+			if(ri(j,i)<riG[i]){
+				riG[i] = ri(j,i);
+			}
+			if(di(j,i)>diG[i]){
+				diG[i] = di(j,i);
+			}
+		}
+		//printf ("ri %ld ", riG[i]);
+		//printf ("di %ld \n", diG[i]);
+	}
+	
+	fprintf(fichierGenerale,"%d %d\n",nbtrav,2);
+	for (i=0;i<nbtrav;i++)
+	{
+		fprintf(fichierGenerale,"%ld %ld\n",riG[i],diG[i]);
+	}
+	fclose(fichierGenerale);
 
 }
 
@@ -257,7 +292,7 @@ void main(void)
 
 	 srand(1);
 
-		for(alpha=0.2;alpha<=1.0;alpha+=0.2)
+	for(alpha=0.2;alpha<=1.0;alpha+=0.2)
 		{
 			for(beta=0.2;beta<=1.0;beta+=0.2)
 			{
@@ -266,14 +301,28 @@ void main(void)
 					for (it=0;it<iterations;it++)
 					{
 						generer(nbjob,nbmachine,alpha,beta,a);
+						ReadData();
+						genererGenerale(nbjob,nbmachine,alpha,beta,a);
+						ReadData2();
+
 					}
 				}
 			}
 		}
 
 		printf("fin de la generation \n");
-		ReadData();
-		//printf("Lecture des données terminée \n");
+		//ReadData();
+	
+		printf("Lecture des données terminée \n");
+		/*for(int j=0;j<NbMachines;j++){
+			for(int i = 0;i<NbJobs ;i++){
+				printf("id, ri %ld %ld\n",id(j), ri(j,i));
+				printf("pi , di %ld %ld\n",pi(j,i), di(j,i));
+			}
+		}*/
+		for(int i = 0;i<NbJobs ;i++){
+			printf("riG, diG %ld %ld\n",riG(i), diG(i));
+		}
 		//JobShop();
 		system("PAUSE");
 }

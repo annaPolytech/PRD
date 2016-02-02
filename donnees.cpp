@@ -25,29 +25,9 @@ void ReadData()
  unsigned int temp,uiLoop,riG, diG, ri,pi,di,uiLoop2,uiLoop3,j;
  unsigned int Di2;
 
- // Lecture du fichier general
 
- FInG=fopen("donneesG.pb","rt");
-  // on lit la 1ere
- fscanf(FIn,"%u %u\n",&NbJobs,&temp);
- for(uiLoop=0;uiLoop<NbJobs;uiLoop++)
- {
-	 fscanf(FIn,"%u %u\n",&riG,&diG);
-	 uiLoop2=0;
-	 while (uiLoop2<uiLoop && (ri>dataJob.riG[uiLoop2] || (ri==dataJob.riG[uiLoop2] && di>dataJob.diG[uiLoop2]))) uiLoop2++;
-	 for (uiLoop3=uiLoop;uiLoop3>uiLoop2;uiLoop3--)
-	 {
-	 	 dataJob.riG[uiLoop3]=dataJob.riG[uiLoop3-1];
-		 dataJob.diG[uiLoop3]=dataJob.diG[uiLoop3-1];
-	 }
-	 dataJob.riG[uiLoop2]=ri;
-	 dataJob.diG[uiLoop2]=di;
- }
- fclose(FInG);
 
- for(int i=0;i<NbJobs;i++){
-	 printf("%u %u\n",dataJob.riG[i],dataJob.diG[i] );
- }
+
 
  // lecture du fichier job / machine
 
@@ -71,6 +51,7 @@ void ReadData()
 		 while (uiLoop2<uiLoop && (ri>tabStructure[j].ri[uiLoop2] || (ri==tabStructure[j].ri[uiLoop2] && di>tabStructure[j].di[uiLoop2]))) uiLoop2++;
 		 for (uiLoop3=uiLoop;uiLoop3>uiLoop2;uiLoop3--)
 		 {
+			 tabStructure[j].identifiant=temp;
 			 tabStructure[j].ri[uiLoop3]=tabStructure[j].ri[uiLoop3-1];
 			 tabStructure[j].pi[uiLoop3]=tabStructure[j].pi[uiLoop3-1];
 			 tabStructure[j].di[uiLoop3]=tabStructure[j].di[uiLoop3-1];
@@ -80,6 +61,7 @@ void ReadData()
 			 //Data.Di[uiLoop3]=Data.Di[uiLoop3-1];
 			 
 		 }
+		 tabStructure[j].identifiant=temp;
 		 tabStructure[j].ri[uiLoop2]=ri;
 		 tabStructure[j].pi[uiLoop2]=pi;
 		 tabStructure[j].di[uiLoop2]=di;
@@ -105,6 +87,35 @@ printf ("riDonne %u %u %u %u %u %u \n", tabStructure[1].ri[3], tabStructure[1].p
 	}
  }
  fclose(FOut);
+
+
+}
+
+void ReadData2(){
+	// Reading of the data in the file donnees.pb
+ FILE *FInG;
+ FILE *FIn;
+ unsigned int temp,uiLoop,riG, diG, ri,pi,di,uiLoop2,uiLoop3,j;
+ unsigned int Di2;
+
+ // Lecture du fichier general
+ FInG=fopen("donneesG.pb","rt");
+ // On lit la 1ere
+ fscanf(FInG,"%u %u\n",&NbJobs,&temp);
+ for(uiLoop=0;uiLoop<NbJobs;uiLoop++)
+ {
+	 fscanf(FInG,"%u %u\n",&riG,&diG);
+	 uiLoop2=0;
+	 while (uiLoop2<uiLoop && (riG>dataJob.riG[uiLoop2] || (riG==dataJob.riG[uiLoop2] && diG>dataJob.diG[uiLoop2]))) uiLoop2++;
+	 for (uiLoop3=uiLoop;uiLoop3>uiLoop2;uiLoop3--)
+	 {
+	 	 dataJob.riG[uiLoop3]=dataJob.riG[uiLoop3-1];
+		 dataJob.diG[uiLoop3]=dataJob.diG[uiLoop3-1];
+	 }
+	 dataJob.riG[uiLoop2]=riG;
+	 dataJob.diG[uiLoop2]=diG;
+ }
+ fclose(FInG);
 
 
 }
