@@ -45,6 +45,9 @@ int somme(long int *in,int taille)
 	return sum;
 }
 
+/*
+	Génération des données des jobs en fonction des machines 
+*/
 void generer(long int nbtrav, long int nbmach, double alpha,double beta,double a)
 {
 	
@@ -69,12 +72,10 @@ void generer(long int nbtrav, long int nbmach, double alpha,double beta,double a
 		di[i] = 0;
 		pi[i] = 0;
 	 }
-	 
-		 //////////////////////////////////////////
+	
+	// création du fichier des jobs par machine
 
-		 // création du fichier des jobs par machine
-
-	 fichier=fopen("donnees.pb","wt");
+	 fichier=fopen("donneesJobMachine.pb","wt");
 	 int km;
 	 // pour chaque machine
 	 for(km=0;km<nbmach;km++)
@@ -163,30 +164,11 @@ void generer(long int nbtrav, long int nbmach, double alpha,double beta,double a
 	 }
  
 	 fclose(fichier);
-
-	 ////////////////////////////////////////////////////////////
-
-	 
-	 ////////////////////////////////////////////////////////////
- 	filebuf fichier2;
-	filebuf *ouvert=fichier2.open("DONNEES.DAT",ios_base::out);
-	if(!ouvert)
-	{
-		cout<<"probleme d'ouverture du fichier "<<"DONNEES.DAT"<<endl;
-		exit(1);
-	}
-	ostream sortie(&fichier2);
-	for(int j=0;j<nbmach;j++)
-	{
-		for(int i=0;i<nbtrav;i++)
-		{
-			sortie<<j<<" "<<i+1<<" "<<ri[i]<<" "<<pi[i]<<" "<<di[i]<<" "<<Di[i]<<endl;
-		}
-	}
-	fichier2.close();
-
 }
 
+/*
+	Génération des données générales des jobs 
+*/
 void genererGenerale(long int nbtrav, long int nbmach, double alpha,double beta,double a)
 {
 	long int i,k,j;
@@ -194,7 +176,7 @@ void genererGenerale(long int nbtrav, long int nbmach, double alpha,double beta,
 	 int sum_pi;
 	// création du fichier général
 	 FILE *fichierGenerale;
-	 fichierGenerale=fopen("donneesG.pb","wt");
+	 fichierGenerale=fopen("donneesJob.pb","wt");
 
 
 	 for(i=0;i<nbtrav;i++)
@@ -210,8 +192,6 @@ void genererGenerale(long int nbtrav, long int nbmach, double alpha,double beta,
 				diG[i] = di(j,i);
 			}
 		}
-		//printf ("ri %ld ", riG[i]);
-		//printf ("di %ld \n", diG[i]);
 	}
 	
 	fprintf(fichierGenerale,"%d %d\n",nbtrav,2);
@@ -220,15 +200,68 @@ void genererGenerale(long int nbtrav, long int nbmach, double alpha,double beta,
 		fprintf(fichierGenerale,"%ld %ld\n",riG[i],diG[i]);
 	}
 	fclose(fichierGenerale);
-
 }
 
+/*
+	Formattage des données pour Schrage 
+*/
+void genererDonneesSchrage(long int nbtrav, unsigned int idMachine){
+	FILE *fichierSchrage;
+	fichierSchrage=fopen("donnees.pb","wt");
+
+	fprintf(fichierSchrage,"%d %d\n",nbtrav,idMachine);
+
+	for (int i=0;i<nbtrav;i++)
+	{
+ 		 fprintf(fichierSchrage,"%ld %ld %ld\n",ri(idMachine,i),di(idMachine,i),pi(idMachine,i));
+	}
+	fclose(fichierSchrage);
+}
+
+
+/*
+	Execution de Schrage 
+*/
+double executerSchrage(unsigned int idMachine){
+	printf("\#\#\#\#\#\# RUNNING SchrageEtRL\n");
+	spawnl(P_WAIT,"SchrageEtRL.exe","SchrageEtRL.exe",NULL);
+
+	// On ouvre en lecture le fichier IPPrepro.txt
+	ifstream inFile("SchrageEtRL.txt");
+	int CiSchrage[NbMaxJob];
+	string mot;
+	double retard;
+	if(inFile.is_open()) {
+			int foo;
+			inFile >> foo; // NBjob
+			inFile >> retard; // 40
+			inFile >> mot; // 40
+			for(int job=0; job<NbJobs ; job++){
+				inFile >> CiSchrage[job];
+			}
+			inFile.close();
+	}
+	
+	for(int job=0; job<NbJobs ; job++){
+		setCi(idMachine, job, CiSchrage[job]);
+		//printf ("Ci : %u \n", CiSchrage[job]);
+	}
+
+	printf ("Le retard sur la machine est de : %lf \n", retard);
+	return retard;
+}
+
+
+
+/*
+	JobShop
+*/
 void JobShop()
 {
-	// pour chaque machine, on calcule la somme des temps d'execution
 	unsigned int sommePIJ[NbMaxMachine];
 	unsigned int reference[NbMaxMachine][2];
 	
+	// pour chaque machine, on calcule la somme des temps d'execution
 	for(int i=0;i<NbMaxMachine;i++)
 	{
 		sommePIJ[i]=0;
@@ -244,38 +277,80 @@ void JobShop()
 	// tri du tableau
 	std::sort(std::begin(sommePIJ),std::end(sommePIJ));
 
-	//affichage des valeurs
-	for(int i=0;i<NbMaxMachine;i++){
-		printf("%u \n",sommePIJ[i]);
-	}
-	for(int i=0;i<NbMaxMachine;i++){
-		printf("%u %u\n",reference[i][0], reference[i][1]);
-	}
 
+	// ************ Recherche de la machine la plus chargée ************ // 
 	int jFirst=0;
-	// on prend la machine la plus chargée
 	for(int i=0;i<NbMaxMachine;i++){
-		if(reference[i][1]==sommePIJ[0])
+		if(reference[i][1]==sommePIJ[NbMaxMachine-1])
 		{
 			jFirst = reference[i][0];
-			printf("%u \n",jFirst);
+			printf("Jfirst = %u \n",jFirst);
 		}
 	}
 
+	// ********** Calcul des dates de débuts ********** //
+	int valeurRi = 0;
+	int valeurDi = 0;
 	// pour chaque job
 	for(int job=0;job<NbJobs ;job++)
 	{
+		// initialisation de la valeur de ri
+		valeurRi = riG(job);
+		
 		// pour chaque machine
-		for(int i=0;i<NbMaxMachine;i++){
-	
-			if(Di(jFirst,job,i)!=0)
-			{
-				
+		int mach1=jFirst;
+		int mach2=NbMaxMachine+1;
+		int nbIte=0;
+		
+		// calcul des dates de débuts
+		while(mach2 != mach1 && nbIte<NbMaxMachine ){
+			for(int mach=0;mach<NbMaxMachine;mach++){
+				// s'il y a un délai avec une autre machine
+				if(Di(mach,job,mach1)!=0)
+				{
+					//printf("%u %u %u %u\n", job, mach1, mach, Di(mach,job,mach1));
+					// calcul de la valeur de ri
+					valeurRi = valeurRi + pi(mach,job) + Di(mach,job,mach1);
+					//printf ("calcul  %u %u %u \n", valeurRi , pi(mach,job) ,  Di(mach,job,mach1));
+					//printf ("ri %u \n", ri(mach1, job));
+					mach2=mach1;
+					mach1=mach;
+					printf ("\n");
+				}
 			}
+			nbIte++;
 		}
+		// mise a jour de la valeur du ri
+		setri(jFirst ,job,valeurRi);
+
+		
+		// ********** Calcul des dates de fin ********** //
+
+		valeurDi = diG(job);
+		mach1=jFirst;
+		mach2=NbMaxMachine+1;
+		nbIte=0;
+		while(mach2 != mach1 && nbIte<NbMaxMachine ){
+			for(int mach=0;mach<NbMaxMachine;mach++){
+				// s'il y a un délai avec une autre machine
+				if(Di(mach1,job,mach)!=0)
+				{
+					valeurDi = valeurDi - pi(mach,job) - Di(mach1,job,mach);
+					mach2=mach1;
+					mach1=mach;
+					printf ("\n");
+				}
+			}
+			nbIte++;
+		}
+		// mise a jour de la valeur du ri
+		setdi(jFirst ,job,valeurDi);
 	}
+	// ********** Application de Schrage ********** //
+	genererDonneesSchrage(NbJobs, jFirst);
+	double retard = executerSchrage(jFirst);
 
-
+	
 }
 
 
@@ -292,7 +367,7 @@ void main(void)
 
 	 srand(1);
 
-	for(alpha=0.2;alpha<=1.0;alpha+=0.2)
+	/*for(alpha=0.2;alpha<=1.0;alpha+=0.2)
 		{
 			for(beta=0.2;beta<=1.0;beta+=0.2)
 			{
@@ -308,21 +383,27 @@ void main(void)
 					}
 				}
 			}
-		}
-
-		printf("fin de la generation \n");
-		//ReadData();
-	
-		printf("Lecture des données terminée \n");
-		/*for(int j=0;j<NbMachines;j++){
-			for(int i = 0;i<NbJobs ;i++){
-				printf("id, ri %ld %ld\n",id(j), ri(j,i));
-				printf("pi , di %ld %ld\n",pi(j,i), di(j,i));
-			}
 		}*/
+		printf("fin de la generation \n");
+		// Test sur l'exemple
+		ReadData();
+		ReadData2();
 		for(int i = 0;i<NbJobs ;i++){
 			printf("riG, diG %ld %ld\n",riG(i), diG(i));
 		}
-		//JobShop();
+		printf("\n");
+		for(int j=0;j<NbMachines;j++){
+			for(int i = 0;i<NbJobs ;i++){
+				//printf("ri, di %ld %ld\n",ri(j,i), di(j,i));
+				printf("mach, job, pi %u %ld %ld\n",j, i, pi(j,i));
+			}
+		}
+		JobShop();
+		printf("Job shop \n");
+		for(int j=0;j<NbMachines;j++){
+			for(int i = 0;i<NbJobs ;i++){
+				printf("ri, di, pi, Ci %ld %ld %ld %ld\n",ri(j,i), di(j,i), pi(j,i), Ci(j,i));
+			}
+		}
 		system("PAUSE");
 }

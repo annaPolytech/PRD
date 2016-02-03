@@ -12,7 +12,12 @@ inline unsigned int id(unsigned int uiMachine){return tabStructure[uiMachine].id
 inline unsigned int ri(unsigned int uiMachine, unsigned int uiJob) {return tabStructure[uiMachine].ri[uiJob];}
 inline unsigned int pi(unsigned int uiMachine, unsigned int uiJob) {return tabStructure[uiMachine].pi[uiJob];}
 inline unsigned int di(unsigned int uiMachine, unsigned int uiJob) {return tabStructure[uiMachine].di[uiJob];}
+inline unsigned int Ci(unsigned int uiMachine, unsigned int uiJob) {return tabStructure[uiMachine].Ci[uiJob];}
 inline unsigned int Di(unsigned int uiMachine, unsigned int uiJob, unsigned int uiMachine2) {return tabStructure[uiMachine].Di[uiJob][uiMachine2];}
+
+inline unsigned int setri(unsigned int uiMachine, unsigned int uiJob, unsigned int valeurri) {return tabStructure[uiMachine].ri[uiJob] = valeurri;}
+inline unsigned int setdi(unsigned int uiMachine, unsigned int uiJob, unsigned int valeurdi) {return tabStructure[uiMachine].di[uiJob] = valeurdi;}
+inline unsigned int setCi(unsigned int uiMachine, unsigned int uiJob, unsigned int valeurCi) {return tabStructure[uiMachine].Ci[uiJob] = valeurCi;}
 
 inline unsigned int riG(unsigned int uiJob) {return dataJob.riG[uiJob];}
 inline unsigned int diG(unsigned int uiJob) {return dataJob.diG[uiJob];}
@@ -31,7 +36,7 @@ void ReadData()
 
  // lecture du fichier job / machine
 
- FIn=fopen("donnees.pb","rt");
+ FIn=fopen("donnees1.pb","rt");
  // pour chaque machine
  for(j=0;j<NbMachines;j++)
  {
@@ -55,6 +60,7 @@ void ReadData()
 			 tabStructure[j].ri[uiLoop3]=tabStructure[j].ri[uiLoop3-1];
 			 tabStructure[j].pi[uiLoop3]=tabStructure[j].pi[uiLoop3-1];
 			 tabStructure[j].di[uiLoop3]=tabStructure[j].di[uiLoop3-1];
+			 tabStructure[j].Ci[uiLoop3]=tabStructure[j].Ci[uiLoop3-1];
 			for (int i=0;i<NbMachines ;i++){
 				tabStructure[j].Di[uiLoop3][i]=tabStructure[j].Di[uiLoop3-1][i];
 			}
@@ -65,6 +71,7 @@ void ReadData()
 		 tabStructure[j].ri[uiLoop2]=ri;
 		 tabStructure[j].pi[uiLoop2]=pi;
 		 tabStructure[j].di[uiLoop2]=di;
+		 tabStructure[j].Ci[uiLoop2]=0;
 		 for (int i=0;i<NbMachines ;i++){
 			 tabStructure[j].Di[uiLoop2][i]=Di[i];
 		}		 
@@ -77,17 +84,6 @@ printf ("riDonne %u %u %u %u %u %u \n", tabStructure[1].ri[1], tabStructure[1].p
 printf ("riDonne %u %u %u %u %u %u \n", tabStructure[1].ri[2], tabStructure[1].pi[2], tabStructure[1].di[2], tabStructure[1].Di[2][0], tabStructure[1].Di[2][1], tabStructure[1].Di[2][2]);
 printf ("riDonne %u %u %u %u %u %u \n", tabStructure[1].ri[3], tabStructure[1].pi[3], tabStructure[1].di[3], tabStructure[1].Di[3][0], tabStructure[1].Di[3][1], tabStructure[1].Di[3][2]);
  */// Writting of the data into the format of Carlier's Branch and Bound (file donnees.dat)
- FILE *FOut;
- FOut=fopen("donnees.dat","wt");
- for(int uiMach=0;uiMach<NbMachines;uiMach++)
- {	
-	for(uiLoop=0;uiLoop<NbJobs;uiLoop++)
-	{
-		fprintf(FOut,"%d %d %d\n",tabStructure[uiMach].ri[uiLoop],tabStructure[uiMach].pi[uiLoop],tabStructure[uiMach].di[uiLoop]);
-	}
- }
- fclose(FOut);
-
 
 }
 
@@ -99,7 +95,7 @@ void ReadData2(){
  unsigned int Di2;
 
  // Lecture du fichier general
- FInG=fopen("donneesG.pb","rt");
+ FInG=fopen("donneesG1.pb","rt");
  // On lit la 1ere
  fscanf(FInG,"%u %u\n",&NbJobs,&temp);
  for(uiLoop=0;uiLoop<NbJobs;uiLoop++)
@@ -116,6 +112,4 @@ void ReadData2(){
 	 dataJob.diG[uiLoop2]=diG;
  }
  fclose(FInG);
-
-
 }
