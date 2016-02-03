@@ -229,13 +229,11 @@ double executerSchrage(unsigned int idMachine){
 	// On ouvre en lecture le fichier IPPrepro.txt
 	ifstream inFile("SchrageEtRL.txt");
 	int CiSchrage[NbMaxJob];
-	string mot;
 	double retard;
 	if(inFile.is_open()) {
 			int foo;
 			inFile >> foo; // NBjob
 			inFile >> retard; // 40
-			inFile >> mot; // 40
 			for(int job=0; job<NbJobs ; job++){
 				inFile >> CiSchrage[job];
 			}
@@ -277,79 +275,126 @@ void JobShop()
 	// tri du tableau
 	std::sort(std::begin(sommePIJ),std::end(sommePIJ));
 
-
-	// ************ Recherche de la machine la plus chargée ************ // 
-	int jFirst=0;
-	for(int i=0;i<NbMaxMachine;i++){
-		if(reference[i][1]==sommePIJ[NbMaxMachine-1])
-		{
-			jFirst = reference[i][0];
-			printf("Jfirst = %u \n",jFirst);
-		}
-	}
-
-	// ********** Calcul des dates de débuts ********** //
-	int valeurRi = 0;
-	int valeurDi = 0;
-	// pour chaque job
-	for(int job=0;job<NbJobs ;job++)
+	int nombreMachines = NbMachines;
+	int nbMOrdo = 0;
+	int machineOrdo[NbMaxMachine];
+	double sommeRetardMax = 0;
+	while(nbMOrdo<NbMachines)
 	{
-		// initialisation de la valeur de ri
-		valeurRi = riG(job);
-		
-		// pour chaque machine
-		int mach1=jFirst;
-		int mach2=NbMaxMachine+1;
-		int nbIte=0;
-		
-		// calcul des dates de débuts
-		while(mach2 != mach1 && nbIte<NbMaxMachine ){
-			for(int mach=0;mach<NbMaxMachine;mach++){
-				// s'il y a un délai avec une autre machine
-				if(Di(mach,job,mach1)!=0)
+		int jFirst=0;
+
+		// ********** Recherche de la machine la plus chargée et non ordonnancée ********** //
+		for(int i=0;i<NbMachines;i++)
+		{
+			bool ordo = false;
+			// on regarde si la machine a déja été ordo
+			for(int j=0; j<NbMaxMachine;j++)
+			{
+				if(machineOrdo[j]==reference[i][0])
 				{
-					//printf("%u %u %u %u\n", job, mach1, mach, Di(mach,job,mach1));
-					// calcul de la valeur de ri
-					valeurRi = valeurRi + pi(mach,job) + Di(mach,job,mach1);
-					//printf ("calcul  %u %u %u \n", valeurRi , pi(mach,job) ,  Di(mach,job,mach1));
-					//printf ("ri %u \n", ri(mach1, job));
-					mach2=mach1;
-					mach1=mach;
-					printf ("\n");
+					ordo = true;
 				}
 			}
-			nbIte++;
-		}
-		// mise a jour de la valeur du ri
-		setri(jFirst ,job,valeurRi);
-
-		
-		// ********** Calcul des dates de fin ********** //
-
-		valeurDi = diG(job);
-		mach1=jFirst;
-		mach2=NbMaxMachine+1;
-		nbIte=0;
-		while(mach2 != mach1 && nbIte<NbMaxMachine ){
-			for(int mach=0;mach<NbMaxMachine;mach++){
-				// s'il y a un délai avec une autre machine
-				if(Di(mach1,job,mach)!=0)
-				{
-					valeurDi = valeurDi - pi(mach,job) - Di(mach1,job,mach);
-					mach2=mach1;
-					mach1=mach;
-					printf ("\n");
-				}
+			// on regarde si la machine est la plus chargée
+			if(reference[i][1]==sommePIJ[nombreMachines-1] && ordo==false)
+			{
+				jFirst = reference[i][0];
+				printf("Jfirst = %u \n",jFirst);
 			}
-			nbIte++;
 		}
-		// mise a jour de la valeur du ri
-		setdi(jFirst ,job,valeurDi);
+			
+		// ********** Calcul des dates de débuts ********** //
+		int valeurRi = 0;
+		int valeurDi = 0;
+		// pour chaque job
+		for(int job=0;job<NbJobs ;job++)
+		{
+			// initialisation de la valeur de ri
+			valeurRi = riG(job);
+		
+			// pour chaque machine
+			int mach1=jFirst;
+			int mach2=NbMaxMachine+1;
+			int nbIte=0;
+		
+			// calcul des dates de débuts
+			while(mach2 != mach1 && nbIte<NbMaxMachine ){
+				for(int mach=0;mach<NbMaxMachine;mach++){
+					// s'il y a un délai avec une autre machine
+					if(Di(mach,job,mach1)!=0)
+					{
+						if(Ci(mach,job)!=0)
+						{
+							valeurRi = Ci(mach,job) + Di(mach,job,mach1);
+							//printf ("calcul  %u %u %u \n", valeurRi , Ci(mach,job) ,  Di(mach,job,mach1));
+							mach2=mach1;
+							nbIte =NbMaxMachine ;
+						}
+						else
+						{
+							//printf("%u %u %u %u\n", job, mach1, mach, Di(mach,job,mach1));
+							// calcul de la valeur de ri
+							valeurRi = valeurRi + pi(mach,job) + Di(mach,job,mach1);
+							//printf ("calcul  %u %u %u \n", valeurRi , pi(mach,job) ,  Di(mach,job,mach1));
+							//printf ("ri %u \n", ri(mach1, job));
+							mach2=mach1;
+							mach1=mach;
+							//printf ("\n");
+						}
+					}
+				}
+				nbIte++;
+			}
+			// mise a jour de la valeur du ri
+			setri(jFirst ,job,valeurRi);	
+			//printf("hello\n");
+				
+			// ********** Calcul des dates de fin ********** //
+
+			valeurDi = diG(job);
+			mach1=jFirst;
+			mach2=NbMaxMachine+1;
+			nbIte=0;
+			while(mach2 != mach1 && nbIte<NbMaxMachine ){
+				for(int mach=0;mach<NbMaxMachine;mach++){
+					// s'il y a un délai avec une autre machine
+					if(Di(mach1,job,mach)!=0)
+					{
+						if(Ci(mach,job)!=0)
+						{
+							valeurDi = Ci(mach,job) - Di(mach,job,mach1);
+							//printf ("calcul  %u %u %u \n", valeurRi , Ci(mach,job) ,  Di(mach,job,mach1));
+							mach2=mach1;
+							nbIte =NbMaxMachine ;
+						}
+						else
+						{
+							//printf("%u %u %u %u\n", job, mach1, mach, Di(mach,job,mach1));
+							// calcul de la valeur de ri
+							valeurDi = valeurDi - pi(mach,job) - Di(mach1,job,mach);
+							//printf ("calcul  %u %u %u \n", valeurRi , pi(mach,job) ,  Di(mach,job,mach1));
+							//printf ("ri %u \n", ri(mach1, job));
+							mach2=mach1;
+							mach1=mach;
+							//printf ("\n");
+						}
+					}
+				}
+				nbIte++;
+			}
+			// mise a jour de la valeur du ri
+			setdi(jFirst ,job,valeurDi);
+		}
+		// ********** Application de Schrage ********** //
+		genererDonneesSchrage(NbJobs, jFirst);
+		double retard = executerSchrage(jFirst);
+		sommeRetardMax = sommeRetardMax + retard;	
+		nombreMachines --;
+		machineOrdo[nbMOrdo]=jFirst;
+		nbMOrdo ++;
 	}
-	// ********** Application de Schrage ********** //
-	genererDonneesSchrage(NbJobs, jFirst);
-	double retard = executerSchrage(jFirst);
-
+	
+	printf("le retard max total est de: %lf\n", sommeRetardMax);
 	
 }
 
