@@ -52,7 +52,7 @@ void ReadData()
 		 }
 		 fscanf(FIn,"\n");
 
-		 uiLoop2=0;
+		/* uiLoop2=0;
 		 while (uiLoop2<uiLoop && (ri>tabStructure[j].ri[uiLoop2] || (ri==tabStructure[j].ri[uiLoop2] && di>tabStructure[j].di[uiLoop2]))) uiLoop2++;
 		 for (uiLoop3=uiLoop;uiLoop3>uiLoop2;uiLoop3--)
 		 {
@@ -74,7 +74,16 @@ void ReadData()
 		 tabStructure[j].Ci[uiLoop2]=0;
 		 for (int i=0;i<NbMachines ;i++){
 			 tabStructure[j].Di[uiLoop2][i]=Di[i];
-		}		 
+		}	*/	 
+
+		 tabStructure[j].identifiant=temp;
+		 tabStructure[j].ri[uiLoop]=ri;
+		 tabStructure[j].pi[uiLoop]=pi;
+		 tabStructure[j].di[uiLoop]=di;
+		 tabStructure[j].Ci[uiLoop]=0;
+		 for (int i=0;i<NbMachines ;i++){
+			 tabStructure[j].Di[uiLoop][i]=Di[i];
+		}	
 	 }
  }
  fclose(FIn);
@@ -101,15 +110,17 @@ void ReadData2(){
  for(uiLoop=0;uiLoop<NbJobs;uiLoop++)
  {
 	 fscanf(FInG,"%u %u\n",&riG,&diG);
-	 uiLoop2=0;
-	 while (uiLoop2<uiLoop && (riG>dataJob.riG[uiLoop2] || (riG==dataJob.riG[uiLoop2] && diG>dataJob.diG[uiLoop2]))) uiLoop2++;
-	 for (uiLoop3=uiLoop;uiLoop3>uiLoop2;uiLoop3--)
-	 {
-	 	 dataJob.riG[uiLoop3]=dataJob.riG[uiLoop3-1];
-		 dataJob.diG[uiLoop3]=dataJob.diG[uiLoop3-1];
-	 }
-	 dataJob.riG[uiLoop2]=riG;
-	 dataJob.diG[uiLoop2]=diG;
+	 //uiLoop2=0;
+	 //while (uiLoop2<uiLoop && (riG>dataJob.riG[uiLoop2] || (riG==dataJob.riG[uiLoop2] && diG>dataJob.diG[uiLoop2]))) uiLoop2++;
+	// for (uiLoop3=uiLoop;uiLoop3>uiLoop2;uiLoop3--)
+	 //{
+	 	// dataJob.riG[uiLoop3]=dataJob.riG[uiLoop3-1];
+		// dataJob.diG[uiLoop3]=dataJob.diG[uiLoop3-1];
+	// }
+	 //dataJob.riG[uiLoop2]=riG;
+	 //dataJob.diG[uiLoop2]=diG;
+	 dataJob.riG[uiLoop]=riG;
+	 dataJob.diG[uiLoop]=diG;
  }
  fclose(FInG);
 }

@@ -229,6 +229,7 @@ double executerSchrage(unsigned int idMachine){
 	// On ouvre en lecture le fichier IPPrepro.txt
 	ifstream inFile("SchrageEtRL.txt");
 	int CiSchrage[NbMaxJob];
+	int JobI[NbMaxJob];
 	double retard;
 	if(inFile.is_open()) {
 			int foo;
@@ -236,12 +237,13 @@ double executerSchrage(unsigned int idMachine){
 			inFile >> retard; // 40
 			for(int job=0; job<NbJobs ; job++){
 				inFile >> CiSchrage[job];
+				inFile >> JobI[job];
 			}
 			inFile.close();
 	}
 	
 	for(int job=0; job<NbJobs ; job++){
-		setCi(idMachine, job, CiSchrage[job]);
+		setCi(idMachine, JobI[job], CiSchrage[job]);
 		//printf ("Ci : %u \n", CiSchrage[job]);
 	}
 
@@ -310,7 +312,7 @@ void JobShop()
 		for(int job=0;job<NbJobs ;job++)
 		{
 			// initialisation de la valeur de ri
-			valeurRi = riG(job);
+			valeurRi = 0;
 		
 			// pour chaque machine
 			int mach1=jFirst;
@@ -318,6 +320,7 @@ void JobShop()
 			int nbIte=0;
 		
 			// calcul des dates de débuts
+			bool Cexiste = false;
 			while(mach2 != mach1 && nbIte<NbMaxMachine ){
 				for(int mach=0;mach<NbMaxMachine;mach++){
 					// s'il y a un délai avec une autre machine
@@ -325,10 +328,18 @@ void JobShop()
 					{
 						if(Ci(mach,job)!=0)
 						{
+							if(nbIte <1){
 							valeurRi = Ci(mach,job) + Di(mach,job,mach1);
 							//printf ("calcul  %u %u %u \n", valeurRi , Ci(mach,job) ,  Di(mach,job,mach1));
 							mach2=mach1;
 							nbIte =NbMaxMachine ;
+							}else{
+							valeurRi = valeurRi+ Ci(mach,job) + Di(mach,job,mach1);
+							//printf ("calcul  %u %u %u \n", valeurRi , Ci(mach,job) ,  Di(mach,job,mach1));
+							mach2=mach1;
+							nbIte =NbMaxMachine ;
+							}
+							Cexiste=true;
 						}
 						else
 						{
@@ -339,33 +350,48 @@ void JobShop()
 							//printf ("ri %u \n", ri(mach1, job));
 							mach2=mach1;
 							mach1=mach;
-							//printf ("\n");
 						}
 					}
 				}
 				nbIte++;
 			}
+			if(Cexiste==false){
+				valeurRi = valeurRi + riG(job);
+				printf("hello\n");
+			}
+
 			// mise a jour de la valeur du ri
 			setri(jFirst ,job,valeurRi);	
 			//printf("hello\n");
 				
 			// ********** Calcul des dates de fin ********** //
 
-			valeurDi = diG(job);
+			valeurDi = 0;
 			mach1=jFirst;
 			mach2=NbMaxMachine+1;
 			nbIte=0;
+			Cexiste=false;
 			while(mach2 != mach1 && nbIte<NbMaxMachine ){
 				for(int mach=0;mach<NbMaxMachine;mach++){
 					// s'il y a un délai avec une autre machine
 					if(Di(mach1,job,mach)!=0)
 					{
+
 						if(Ci(mach,job)!=0)
 						{
-							valeurDi = Ci(mach,job) - Di(mach,job,mach1);
+							if(nbIte <1){
+							valeurDi = valeurDi = Ci(mach,job) - pi(mach, job) -  Di(mach1,job,mach);
 							//printf ("calcul  %u %u %u \n", valeurRi , Ci(mach,job) ,  Di(mach,job,mach1));
 							mach2=mach1;
 							nbIte =NbMaxMachine ;
+							}else{
+							valeurDi = Ci(mach,job) - pi(mach, job) -  Di(mach1,job,mach) - valeurDi;
+							//printf ("calcul  %u %u %u \n", valeurRi , Ci(mach,job) ,  Di(mach,job,mach1));
+							mach2=mach1;
+							nbIte =NbMaxMachine ;
+							}
+							Cexiste=true;
+							
 						}
 						else
 						{
@@ -381,6 +407,10 @@ void JobShop()
 					}
 				}
 				nbIte++;
+			}
+			if(Cexiste==false){
+				valeurDi = diG(job) + valeurDi;
+				printf("hello\n");
 			}
 			// mise a jour de la valeur du ri
 			setdi(jFirst ,job,valeurDi);
@@ -447,7 +477,7 @@ void main(void)
 		printf("Job shop \n");
 		for(int j=0;j<NbMachines;j++){
 			for(int i = 0;i<NbJobs ;i++){
-				printf("ri, di, pi, Ci %ld %ld %ld %ld\n",ri(j,i), di(j,i), pi(j,i), Ci(j,i));
+				printf("ri, di, pi, Ci %ld | %ld | %ld | %ld | %ld %ld %ld\n",ri(j,i), di(j,i), pi(j,i), Ci(j,i), Di(j,i,0), Di(j,i,1), Di(j,i,2));
 			}
 		}
 		system("PAUSE");
