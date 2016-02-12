@@ -19,7 +19,9 @@ struct TData{
 struct TData2{
 	unsigned int riG[MaxJobs];
 	unsigned int diG[MaxJobs];
-} ;
+	unsigned int gamme[MaxJobs][MaxMachines];
+	unsigned int delai[MaxJobs][MaxMachines-1];
+};
 
 extern TData2 Data;
 extern unsigned int NbJobs;
@@ -37,11 +39,13 @@ extern inline unsigned int ri(unsigned int uiMachine, unsigned int uiJob);
 extern inline unsigned int pi(unsigned int uiMachine, unsigned int uiJob);
 extern inline unsigned int di(unsigned int uiMachine, unsigned int uiJob);
 extern inline unsigned int Ci(unsigned int uiMachine, unsigned int uiJob);
-extern inline unsigned int Di(unsigned int uiMachine, unsigned int uiJob, unsigned int uiMachine2);
+//extern inline unsigned int Di(unsigned int uiMachine, unsigned int uiJob, unsigned int uiMachine2);
 
 
 extern inline unsigned int riG(unsigned int uiJob);
 extern inline unsigned int diG(unsigned int uiJob);
+extern inline unsigned int gamme(unsigned int uiJob, unsigned int uiOperation);
+extern inline unsigned int delai(unsigned int uiJob, unsigned int uiOperation);
 
 // setteur
 extern inline unsigned int setri(unsigned int uiMachine, unsigned int uiJob, unsigned int valeurri);

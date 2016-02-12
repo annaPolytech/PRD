@@ -21,7 +21,7 @@ using namespace std;
 #define depart 500   // Min number of jobs
 #define taille_max 5000   // Max number of jobs
 #define pas 500		// Step in the loop on the number of jobs
-#define iterations 30
+#define iterations 2
 
 #define EPSILON 0.0001
 
@@ -48,6 +48,12 @@ int somme(long int *in,int taille)
 /*
 	Génération des données des jobs en fonction des machines 
 */
+
+int rand_a_b(int a, int b){
+    return rand()%(b-a) +a;
+}
+
+
 void generer(long int nbtrav, long int nbmach, double alpha,double beta,double a)
 {
 	
@@ -87,6 +93,7 @@ void generer(long int nbtrav, long int nbmach, double alpha,double beta,double a
 			pi[i]=p;
 		 }
 		 sum_pi=somme(pi,nbtrav);
+
 		 // Génération des dates de début ri
 		 for(i=0;i<nbtrav;i++)
 		 {
@@ -108,57 +115,11 @@ void generer(long int nbtrav, long int nbmach, double alpha,double beta,double a
 			}
 			di[i]=d;
 		 }
-		 // Génération des délais Di
-		 for(i=0;i<nbtrav;i++)
-		 {
-			 for(int m=0;m<NbMaxMachine;m++)
-			 {
-				 if(m==km)
-				 {
-					Di[km][i][m]=0;
-				 }else
-				 {
-					 bool delai = true;
-					 for(int p=0;p<km;p++)
-					 {
-						 if(Di[p][i][m]!=0)
-						 {
-							 delai = false;
-						 }
-					 }
-					 if(delai==false)
-					 {
-						Di[km][i][m] = 0;
-					 }else
-					 {
-						 bool delai2 = true;
-						 for(int p1=0;p1<NbMaxMachine ;p1++)
-						 {
-							 if(Di[km][i][p1]!=0)
-							 {
-								 
-								 delai2 = false;
-							 }
-						 }
-						 if(delai2==false)
-						 {
-							Di[km][i][m] = 0;
-						 }else
-						 {
-							Di[km][i][m]=1;
-						 }
-					 }
-				 }
-			 }
-		 }
+
 		 fprintf(fichier,"%d %d\n",nbtrav,km);
 		 for (i=0;i<nbtrav;i++)
 		 {
 			fprintf(fichier,"%ld %ld %ld",ri[i],di[i],pi[i]);
-			for (j=0;j<nbmach;j++)
-			{
-				fprintf(fichier," %ld",Di[km][i][j]);
-			}
 			fprintf(fichier,"\n");
 		 }
 	 }
@@ -171,8 +132,15 @@ void generer(long int nbtrav, long int nbmach, double alpha,double beta,double a
 */
 void genererGenerale(long int nbtrav, long int nbmach, double alpha,double beta,double a)
 {
+	// Initialisation de la gamme initiale
+	int gammeInitial[NbMaxMachine];
+	for(int mach = 0; mach<NbMaxMachine;mach++){
+		gammeInitial[mach]=mach;
+	}
+
 	long int i,k,j;
-	 long int r,p,d,riG[NbMaxJob], diG[NbMaxJob];
+	long int id1, id2, temp1, temp2;
+	 long int r,p,d,riG[NbMaxJob], diG[NbMaxJob], gamme[NbMaxJob][NbMaxMachine], delai[NbMaxJob][NbMaxMachine-1];
 	 int sum_pi;
 	// création du fichier général
 	 FILE *fichierGenerale;
@@ -183,6 +151,7 @@ void genererGenerale(long int nbtrav, long int nbmach, double alpha,double beta,
 	{
 		riG[i]=99999999999999999;
 		diG[i]=0;
+
 		for(j=0;j<nbmach;j++)
 		{
 			if(ri(j,i)<riG[i]){
@@ -192,12 +161,54 @@ void genererGenerale(long int nbtrav, long int nbmach, double alpha,double beta,
 				diG[i] = di(j,i);
 			}
 		}
+		// Génération des gammes
+
+		// initialisation de la gamme
+		for(int mach = 0; mach<NbMaxMachine;mach++){
+			gamme[i][mach]=gammeInitial[mach];
+		}
+		for(int mach = 0; mach<NbMaxMachine;mach++){
+			id1 = rand_a_b(0, NbMaxMachine);
+			id2 = rand_a_b(0, NbMaxMachine);
+			temp1 = gamme[i][id1];
+			temp2 = gamme[i][id2];
+			gamme[i][id1] = temp2; 
+			gamme[i][id2] = temp1;
+		}
+		
+		
+		// Génération des délais
+		for(int mach = 0; mach<NbMaxMachine-1;mach++){
+			p=((float)rand()/(float)RAND_MAX)*49+1;
+			delai[i][mach]=p;
+			printf("%ld ", gamme[i][mach]);
+		}
+
+		printf("\n gamme du job %ld est ", i);
+		for(int mach = 0; mach<NbMaxMachine;mach++){
+			printf("%ld ", gamme[i][mach]);
+		}
+		printf("\n");
+		for(int mach = 0; mach<NbMaxMachine;mach++){
+			printf("%ld ", delai[i][mach]);
+		}
+		printf("\n\n ");
+		
 	}
 	
 	fprintf(fichierGenerale,"%d %d\n",nbtrav,2);
 	for (i=0;i<nbtrav;i++)
 	{
-		fprintf(fichierGenerale,"%ld %ld\n",riG[i],diG[i]);
+		fprintf(fichierGenerale,"%ld %ld",riG[i],diG[i]);
+		for (j=0;j<nbmach;j++)
+		{
+			fprintf(fichierGenerale," %ld",gamme[i][j]);
+		}
+		for (j=0;j<nbmach-1;j++)
+		{
+			fprintf(fichierGenerale," %ld",delai[i][j]);
+		}
+		fprintf(fichierGenerale,"\n");
 	}
 	fclose(fichierGenerale);
 }
@@ -311,6 +322,8 @@ void JobShop()
 		// pour chaque job
 		for(int job=0;job<NbJobs ;job++)
 		{
+		
+			
 			// initialisation de la valeur de ri
 			valeurRi = 0;
 		
@@ -318,51 +331,54 @@ void JobShop()
 			int mach1=jFirst;
 			int mach2=NbMaxMachine+1;
 			int nbIte=0;
+			int jGamme = 0;
+			int machPrec = 0;
+			bool Cexiste=false;
 		
-			// calcul des dates de débuts
-			bool Cexiste = false;
+			// recherche de la position de la machine dans la gamme du job
 			while(mach2 != mach1 && nbIte<NbMaxMachine ){
-				for(int mach=0;mach<NbMaxMachine;mach++){
-					// s'il y a un délai avec une autre machine
-					if(Di(mach,job,mach1)!=0)
+				for(int mach=0; mach<NbMaxMachine;mach++){
+					if(gamme(job,mach)==mach1)
 					{
-						if(Ci(mach,job)!=0)
-						{
-							if(nbIte <1){
-							valeurRi = Ci(mach,job) + Di(mach,job,mach1);
-							//printf ("calcul  %u %u %u \n", valeurRi , Ci(mach,job) ,  Di(mach,job,mach1));
-							mach2=mach1;
-							nbIte =NbMaxMachine ;
-							}else{
-							valeurRi = valeurRi+ Ci(mach,job) + Di(mach,job,mach1);
-							//printf ("calcul  %u %u %u \n", valeurRi , Ci(mach,job) ,  Di(mach,job,mach1));
-							mach2=mach1;
-							nbIte =NbMaxMachine ;
-							}
-							Cexiste=true;
-						}
-						else
-						{
-							//printf("%u %u %u %u\n", job, mach1, mach, Di(mach,job,mach1));
-							// calcul de la valeur de ri
-							valeurRi = valeurRi + pi(mach,job) + Di(mach,job,mach1);
-							//printf ("calcul  %u %u %u \n", valeurRi , pi(mach,job) ,  Di(mach,job,mach1));
-							//printf ("ri %u \n", ri(mach1, job));
-							mach2=mach1;
-							mach1=mach;
-						}
+						jGamme = mach;
+						printf("jGamme = %u \n",jGamme);
 					}
 				}
-				nbIte++;
+
+				// si c'est la 1ere machine
+				if(jGamme == 0){
+					valeurRi = valeurRi + riG(job);
+					mach1=mach2;
+				}else{
+
+					machPrec = gamme(job,jGamme-1);
+			
+					// si la machine précédente est deja ordonnancée
+					if(Ci(machPrec,job)!=0)
+					{
+						if(nbIte <1){
+							valeurRi = Ci(machPrec,job) + delai(job,jGamme-1);
+							nbIte =NbMaxMachine ;
+						}else{
+							valeurRi = valeurRi+ Ci(machPrec,job) + delai(job,jGamme-1);
+							nbIte =NbMaxMachine ;
+						}
+						Cexiste=true;
+					}
+					else
+					{
+						// calcul de la valeur de ri
+						valeurRi = valeurRi + pi(machPrec,job) + delai(job,jGamme-1);
+						mach2=mach1;
+						mach1=machPrec;
+					}
+					nbIte++;
+				}
 			}
-			if(Cexiste==false){
-				valeurRi = valeurRi + riG(job);
-				printf("hello\n");
-			}
+			
 
 			// mise a jour de la valeur du ri
 			setri(jFirst ,job,valeurRi);	
-			//printf("hello\n");
 				
 			// ********** Calcul des dates de fin ********** //
 
@@ -371,50 +387,55 @@ void JobShop()
 			mach2=NbMaxMachine+1;
 			nbIte=0;
 			Cexiste=false;
-			while(mach2 != mach1 && nbIte<NbMaxMachine ){
-				for(int mach=0;mach<NbMaxMachine;mach++){
-					// s'il y a un délai avec une autre machine
-					if(Di(mach1,job,mach)!=0)
-					{
+			int machSuiv=0;
 
-						if(Ci(mach,job)!=0)
-						{
-							if(nbIte <1){
-							valeurDi = valeurDi = Ci(mach,job) - pi(mach, job) -  Di(mach1,job,mach);
-							//printf ("calcul  %u %u %u \n", valeurRi , Ci(mach,job) ,  Di(mach,job,mach1));
-							mach2=mach1;
-							nbIte =NbMaxMachine ;
-							}else{
-							valeurDi = Ci(mach,job) - pi(mach, job) -  Di(mach1,job,mach) - valeurDi;
-							//printf ("calcul  %u %u %u \n", valeurRi , Ci(mach,job) ,  Di(mach,job,mach1));
-							mach2=mach1;
-							nbIte =NbMaxMachine ;
-							}
-							Cexiste=true;
-							
-						}
-						else
-						{
-							//printf("%u %u %u %u\n", job, mach1, mach, Di(mach,job,mach1));
-							// calcul de la valeur de ri
-							valeurDi = valeurDi - pi(mach,job) - Di(mach1,job,mach);
-							//printf ("calcul  %u %u %u \n", valeurRi , pi(mach,job) ,  Di(mach,job,mach1));
-							//printf ("ri %u \n", ri(mach1, job));
-							mach2=mach1;
-							mach1=mach;
-							//printf ("\n");
-						}
+
+			// recherche de la position de la machine dans la gamme du job
+		  
+
+			while(mach2 != mach1 && nbIte<NbMaxMachine ){
+				for(int mach=0; mach<NbMaxMachine;mach++){
+					if(gamme(job,mach)==mach1)
+					{
+						jGamme = mach;
+						printf("jGamme = %u \n",jGamme);
 					}
 				}
-				nbIte++;
+
+				// si c'est la derniere machine
+				if(jGamme == NbMaxMachine-1){
+					valeurDi = diG(job) + valeurDi;
+					mach1=mach2;
+				}else{
+
+					machSuiv = gamme(job,jGamme+1);
+			
+					// si la machine suivante est deja ordonnancée
+					if(Ci(machSuiv,job)!=0)
+					{
+						if(nbIte <1){
+							valeurDi = Ci(machSuiv,job) - pi(machSuiv,job) - delai(job,jGamme);
+							nbIte =NbMaxMachine ;
+						}else{
+							valeurDi = Ci(machSuiv,job) - pi(machSuiv,job) -  delai(job,jGamme) - valeurDi;
+							nbIte =NbMaxMachine ;
+						}
+						Cexiste=true;
+					}
+					else
+					{
+						// calcul de la valeur de di
+						valeurDi = valeurDi - pi(machSuiv,job) - delai(job,jGamme);
+						mach2=mach1;
+						mach1=machSuiv;
+					}
+					nbIte++;
+				}
 			}
-			if(Cexiste==false){
-				valeurDi = diG(job) + valeurDi;
-				printf("hello\n");
-			}
-			// mise a jour de la valeur du ri
+			// mise a jour de la valeur du di
 			setdi(jFirst ,job,valeurDi);
 		}
+
 		// ********** Application de Schrage ********** //
 		genererDonneesSchrage(NbJobs, jFirst);
 		double retard = executerSchrage(jFirst);
@@ -458,18 +479,25 @@ void main(void)
 					}
 				}
 			}
-		}*/
-		printf("fin de la generation \n");
+		}
+		printf("fin de la generation \n");*/
 		// Test sur l'exemple
 		ReadData();
 		ReadData2();
 		for(int i = 0;i<NbJobs ;i++){
 			printf("riG, diG %ld %ld\n",riG(i), diG(i));
+			for(int j = 0;j<NbMachines;j++){
+				printf("%ld ",gamme(i,j));
+			}
+			printf("\n");
+			for(int j = 0;j<NbMachines-1 ;j++){
+				printf("%ld ",delai(i,j));
+			}
+			printf("\n");
 		}
 		printf("\n");
 		for(int j=0;j<NbMachines;j++){
 			for(int i = 0;i<NbJobs ;i++){
-				//printf("ri, di %ld %ld\n",ri(j,i), di(j,i));
 				printf("mach, job, pi %u %ld %ld\n",j, i, pi(j,i));
 			}
 		}
@@ -477,8 +505,10 @@ void main(void)
 		printf("Job shop \n");
 		for(int j=0;j<NbMachines;j++){
 			for(int i = 0;i<NbJobs ;i++){
-				printf("ri, di, pi, Ci %ld | %ld | %ld | %ld | %ld %ld %ld\n",ri(j,i), di(j,i), pi(j,i), Ci(j,i), Di(j,i,0), Di(j,i,1), Di(j,i,2));
+				printf("ri, di, pi, Ci %ld | %ld | %ld | %ld |",ri(j,i), di(j,i), pi(j,i), Ci(j,i));
+				printf(" \n");
 			}
+			printf(" \n");
 		}
 		system("PAUSE");
 }
