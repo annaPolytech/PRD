@@ -12,7 +12,6 @@ struct TData{
 	unsigned int ri[MaxJobs];
 	unsigned int di[MaxJobs];
 	unsigned int Ci[MaxJobs];
-	unsigned int Di[MaxJobs][MaxMachines];
 } ;
 
 // données d'un job en général
@@ -21,6 +20,7 @@ struct TData2{
 	unsigned int diG[MaxJobs];
 	unsigned int gamme[MaxJobs][MaxMachines];
 	unsigned int delai[MaxJobs][MaxMachines-1];
+	unsigned int coutR[MaxJobs];
 };
 
 extern TData2 Data;
@@ -46,6 +46,7 @@ extern inline unsigned int riG(unsigned int uiJob);
 extern inline unsigned int diG(unsigned int uiJob);
 extern inline unsigned int gamme(unsigned int uiJob, unsigned int uiOperation);
 extern inline unsigned int delai(unsigned int uiJob, unsigned int uiOperation);
+extern inline unsigned int coutR(unsigned int uiJob);
 
 // setteur
 extern inline unsigned int setri(unsigned int uiMachine, unsigned int uiJob, unsigned int valeurri);

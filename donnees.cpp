@@ -2,7 +2,7 @@
 #include <iostream>
 #include "donnees.h"
 
-unsigned int NbJobs=20;
+unsigned int NbJobs=4;
 unsigned int NbMachines =3;
 //TData Data; 
 TData tabStructure[MaxMachines];
@@ -23,6 +23,7 @@ inline unsigned int riG(unsigned int uiJob) {return dataJob.riG[uiJob];}
 inline unsigned int diG(unsigned int uiJob) {return dataJob.diG[uiJob];}
 inline unsigned int gamme(unsigned int uiJob, unsigned int uiOperation) {return dataJob.gamme[uiJob][uiOperation];}
 inline unsigned int delai(unsigned int uiJob, unsigned int uiOperation) {return dataJob.delai[uiJob][uiOperation];}
+inline unsigned int coutR(unsigned int uiJob) {return dataJob.coutR[uiJob];}
 
 void ReadData()
 {
@@ -38,8 +39,9 @@ void ReadData()
 
  // lecture du fichier job / machine
 
-// FIn=fopen("donneesJobMachine.pb","rt");
-FIn=fopen("donnees1.pb","rt");
+ //FIn=fopen("donneesJobMachine.pb","rt");
+ // FIn=fopen("donnees1.pb","rt");
+  FIn=fopen("donnees2.pb","rt");
  // pour chaque machine
  for(j=0;j<NbMachines;j++)
  {
@@ -48,23 +50,13 @@ FIn=fopen("donnees1.pb","rt");
 	 for(uiLoop=0;uiLoop<NbJobs;uiLoop++)
 	 {
 		 fscanf(FIn,"%u %u %u ",&ri,&di,&pi);
-		 unsigned int Di [MaxMachines];
-		/* for (int i=0;i<NbMachines ;i++){
-			fscanf(FIn,"%u ",&Di2);
-			Di[i]=Di2;
-		 }*/
 		 fscanf(FIn,"\n");
-
-			 
 
 		 tabStructure[j].identifiant=temp;
 		 tabStructure[j].ri[uiLoop]=ri;
 		 tabStructure[j].pi[uiLoop]=pi;
 		 tabStructure[j].di[uiLoop]=di;
 		 tabStructure[j].Ci[uiLoop]=0;
-	/*	for (int i=0;i<NbMachines ;i++){
-			 tabStructure[j].Di[uiLoop][i]=Di[i];
-		}*/	
 	 }
  }
  fclose(FIn);
@@ -76,20 +68,23 @@ void ReadData2(){
 	// Reading of the data in the file donnees.pb
  FILE *FInG;
  FILE *FIn;
- unsigned int temp,uiLoop, uiMach,riG, diG, ri,pi,di,uiLoop2,uiLoop3,j,i;
+ unsigned int temp,uiLoop, uiMach,riG, diG, coutR, ri,pi,di,uiLoop2,uiLoop3,j,i;
  unsigned int Gi2, Di2;
 
  //Lecture du fichier general
- FInG=fopen("donneesG1.pb","rt");
+// FInG=fopen("donneesG1.pb","rt");
+ FInG=fopen("donneesG2.pb","rt");
  //FInG=fopen("donneesJob.pb","rt");
  // On lit la 1ere
  fscanf(FInG,"%u %u\n",&NbJobs,&temp);
  for(uiLoop=0;uiLoop<NbJobs;uiLoop++)
  {
-	 fscanf(FInG,"%u %u",&riG,&diG);
+	 fscanf(FInG,"%u %u %u",&riG,&diG,&coutR);
 	 dataJob.riG[uiLoop]=riG;
 	 dataJob.diG[uiLoop]=diG;
+	 dataJob.coutR[uiLoop]=coutR;
 
+	 
 	unsigned int Gam [MaxMachines];
 	for (i=0;i<NbMachines ;i++){
 		fscanf(FInG," %u",&Gi2);
@@ -111,4 +106,5 @@ void ReadData2(){
 
  }
  fclose(FInG);
+
 }
