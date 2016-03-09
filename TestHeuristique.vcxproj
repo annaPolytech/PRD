@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectName>Testeur</ProjectName>
+    <ProjectName>JobShop</ProjectName>
     <ProjectGuid>{EFA0E3EC-60CA-468A-B661-54A85FF58276}</ProjectGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -130,14 +130,18 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="1riLmax.cpp" />
     <ClCompile Include="donnees.cpp" />
-    <ClCompile Include="testJobShop.cpp">
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    <ClCompile Include="donneesSchrage.cpp" />
+    <ClCompile Include="jobshop.cpp">
+      <DeploymentContent>false</DeploymentContent>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="1riLmax.h" />
     <ClInclude Include="donnees.h" />
+    <ClInclude Include="donneesSchrage.h" />
+    <ClInclude Include="donneesSchrage2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
