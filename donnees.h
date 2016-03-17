@@ -3,24 +3,25 @@
 #define FDonnees 10
 
 #define MaxMachines 3
-#define MaxJobs 10000
+#define NbMaxJob 50
 
 // données d'un job pour une machine
 struct TData{
 	unsigned int identifiant;
-	unsigned int pi[MaxJobs];
-	unsigned int ri[MaxJobs];
-	unsigned int di[MaxJobs];
-	unsigned int Ci[MaxJobs];
+	unsigned int pi[NbMaxJob];
+	unsigned int ri[NbMaxJob];
+	unsigned int di[NbMaxJob];
+	unsigned int Ci[NbMaxJob];
+	unsigned int nombreJobs;
 } ;
 
 // données d'un job en général
 struct TDataG{
-	unsigned int riG[MaxJobs];
-	unsigned int diG[MaxJobs];
-	unsigned int gamme[MaxJobs][MaxMachines];
-	unsigned int delai[MaxJobs][MaxMachines-1];
-	unsigned int coutR[MaxJobs];
+	unsigned int riG[NbMaxJob];
+	unsigned int diG[NbMaxJob];
+	unsigned int gamme[NbMaxJob][MaxMachines];
+	unsigned int delai[NbMaxJob][MaxMachines-1];
+	unsigned int coutR[NbMaxJob];
 };
 
 extern TDataG Data;
@@ -39,6 +40,7 @@ extern inline unsigned int ri(unsigned int uiMachine, unsigned int uiJob);
 extern inline unsigned int pi(unsigned int uiMachine, unsigned int uiJob);
 extern inline unsigned int di(unsigned int uiMachine, unsigned int uiJob);
 extern inline unsigned int Ci(unsigned int uiMachine, unsigned int uiJob);
+extern inline unsigned int nombreJobs(unsigned int uiMachine);
 //extern inline unsigned int Di(unsigned int uiMachine, unsigned int uiJob, unsigned int uiMachine2);
 
 
@@ -53,4 +55,5 @@ extern inline unsigned int setri(unsigned int uiMachine, unsigned int uiJob, uns
 extern inline unsigned int setdi(unsigned int uiMachine, unsigned int uiJob, unsigned int valeurdi);
 extern inline unsigned int setpi(unsigned int uiMachine, unsigned int uiJob, unsigned int valeurpi);
 extern inline unsigned int setCi(unsigned int uiMachine, unsigned int uiJob, unsigned int valeurCi);
+extern inline unsigned int setCoutRejet(unsigned int uiJob, unsigned int valeurCoutR);
 #endif

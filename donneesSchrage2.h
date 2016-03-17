@@ -2,7 +2,8 @@
 #ifndef FDonnees1
 #define FDonnees1 10
 
-#define MaxJobs1 10000
+#define MaxMachines1 3
+#define MaxJobs1 50
 
 // données d'un job pour une machine
 struct TDataSchrage{
@@ -19,6 +20,7 @@ extern TDataSchrage DataS;
 extern unsigned int NbJobs1;
 
 void ReadDataSchrage();
+void ReadDataSchrage2(int idMachine);
 // This function reads the data and write them into the format expected by the PSE of Carlier (Rivereau implementation)
 // The read data are put into the structure Data and are sorted by increasing values of ri (break ties by increasing di)
 

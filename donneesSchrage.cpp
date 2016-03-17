@@ -1,8 +1,28 @@
-#include <stdio.h>
 #include "donneesSchrage2.h"
-
+#include "donnees.h"
+#include <iostream>
+#include <fstream>
+#include <conio.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <process.h>
+#include <string>
+#include <Math.h>
+#include <limits>
+#include <cstdlib>
+#include <climits>
+#include <algorithm>
+#include <time.h>
+#include <sstream>
+#include <stdio.h>
+#include <conio.h>
+#include <stdlib.h>
+#include <cmath>
+#include <ctime>
 unsigned int NbJobs1;
+//#define NbMaxJob 50
 TDataSchrage dataSchrage;
+using namespace std;
 
 inline unsigned int riS(unsigned int uiJob) {return dataSchrage.riS[uiJob];}
 inline unsigned int piS(unsigned int uiJob) {return dataSchrage.piS[uiJob];}
@@ -45,4 +65,46 @@ void ReadDataSchrage()
  for(uiLoop=0;uiLoop<NbJobs1;uiLoop++)
 	 	 fprintf(FOut,"%d %d %d %d %d\n",dataSchrage.riS[uiLoop],dataSchrage.piS[uiLoop],dataSchrage.diS[uiLoop],dataSchrage.CiS[uiLoop],dataSchrage.jobInit[uiLoop]);
  fclose(FOut);
+}
+
+void ReadDataSchrage2(int idMachine)
+{
+	NbJobs1=nombreJobs(idMachine);
+	int tabRi[MaxJobs1];
+	for(int x=0;x<MaxJobs1;x++){
+		tabRi[x] = 999;
+	}
+	int ref[MaxJobs1][2];
+
+	// remplir tabRi avec les ri des jobs de cette machine
+	for(int job=0;job<NbJobs1;job++)
+	{
+		tabRi[job]=ri(idMachine,job);
+	
+		ref[job][0]=job;
+		ref[job][1]=ri(idMachine,job);
+	}
+
+	// on trie le tableau 
+	std::sort(std::begin(tabRi),std::end(tabRi));
+
+	int parcours = 0;
+	for(int job1=0; job1<NbJobs1;job1++){
+
+		dataSchrage.riS[job1]=tabRi[job1];
+
+		for(int job2=0 ; job2<NbJobs1; job2++){
+			if(ref[job2][1]==tabRi[job1]){
+				dataSchrage.piS[job1]=pi(idMachine,job2);
+				dataSchrage.diS[job1]=di(idMachine,job2);
+				dataSchrage.CiS[job1]=1;
+				dataSchrage.jobInit[job1]=job2;
+			}
+		}
+	}
+
+	printf("riS diS piS \n");
+	for(int job1=0 ; job1<NbJobs1; job1++){
+		printf("%u %u %u \n",dataSchrage.riS[job1],dataSchrage.diS[job1],dataSchrage.piS[job1]);
+	}
 }

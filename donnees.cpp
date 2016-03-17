@@ -2,7 +2,7 @@
 #include <iostream>
 #include "donnees.h"
 
-unsigned int NbJobs=4;
+unsigned int NbJobs;
 unsigned int NbMachines=3;
 
 TData tabStructure[MaxMachines];
@@ -16,11 +16,14 @@ inline unsigned int ri(unsigned int uiMachine, unsigned int uiJob) {return tabSt
 inline unsigned int pi(unsigned int uiMachine, unsigned int uiJob) {return tabStructure[uiMachine].pi[uiJob];}
 inline unsigned int di(unsigned int uiMachine, unsigned int uiJob) {return tabStructure[uiMachine].di[uiJob];}
 inline unsigned int Ci(unsigned int uiMachine, unsigned int uiJob) {return tabStructure[uiMachine].Ci[uiJob];}
+inline unsigned int nombreJobs(unsigned int uiMachine){return tabStructure[uiMachine].nombreJobs;}
+
 
 inline unsigned int setri(unsigned int uiMachine, unsigned int uiJob, unsigned int valeurri) {return tabStructure[uiMachine].ri[uiJob] = valeurri;}
 inline unsigned int setdi(unsigned int uiMachine, unsigned int uiJob, unsigned int valeurdi) {return tabStructure[uiMachine].di[uiJob] = valeurdi;}
 inline unsigned int setpi(unsigned int uiMachine, unsigned int uiJob, unsigned int valeurpi) {return tabStructure[uiMachine].pi[uiJob] = valeurpi;}
 inline unsigned int setCi(unsigned int uiMachine, unsigned int uiJob, unsigned int valeurCi) {return tabStructure[uiMachine].Ci[uiJob] = valeurCi;}
+inline unsigned int setCoutRejet(unsigned int uiJob, unsigned int valeurCoutR){return dataJob.coutR[uiJob] = valeurCoutR;}
 
 // Fonction de la structure job general
 inline unsigned int riG(unsigned int uiJob) {return dataJob.riG[uiJob];}
@@ -54,6 +57,7 @@ void ReadData()
 		 fscanf(FIn,"\n");
 
 		 tabStructure[j].identifiant=temp;
+		 tabStructure[j].nombreJobs=NbJobs;
 		 tabStructure[j].ri[uiLoop]=ri;
 		 tabStructure[j].pi[uiLoop]=pi;
 		 tabStructure[j].di[uiLoop]=di;
