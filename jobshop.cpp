@@ -324,7 +324,7 @@ void miseAJour(){
 	int riSuivant = 0;
 
 	// pour chaque machine
-	int triRi[NbMaxMachine][NbMaxJob];
+	unsigned int triRi[NbMaxMachine][NbMaxJob];
 	int reference[NbMaxMachine][NbMaxJob][2];
 	int pos[NbMaxMachine][NbMaxJob];
 
@@ -334,7 +334,7 @@ void miseAJour(){
 			reference[machine][job][1]=triRi[machine][job];
 			reference[machine][job][0]=job;
 		}
-		std::sort(std::begin(triRi[machine]),std::end(triRi[machine]));
+		std::sort(std::begin(triRi[machine]),std::begin(triRi[machine])+NbJobs);
 	}
 
 
@@ -423,9 +423,11 @@ int ordoSansMinCr(int jMinCr, int *jobsRetires,int nbJobRet){
 	int nbRet = 0;
 	/** Récuperation de la position des jobs sur les machines **/
 
-	int triRi[NbMaxMachine][NbMaxJob];
-	int reference[NbMaxMachine][NbMaxJob][2];
+	unsigned int triRi[NbMaxMachine][NbMaxJob];
+	unsigned int triRiM[NbMaxJob];
+	unsigned int reference[NbMaxMachine][NbMaxJob][2];
 	int pos[NbMaxMachine][NbMaxJob];
+
 
 	for(int machine=0;machine<NbMaxMachine;machine++){
 		for(int job=0;job<NbJobs;job++){
@@ -433,19 +435,47 @@ int ordoSansMinCr(int jMinCr, int *jobsRetires,int nbJobRet){
 			reference[machine][job][1]=triRi[machine][job];
 			reference[machine][job][0]=job;
 		}
-		std::sort(std::begin(triRi[machine]),std::end(triRi[machine]));
-	}
+	
 
+		/*for(int job=0;job<NbJobs;job++){
+			triRiM[job]=triRi[machine][job];
+			printf("riA = %u\n",triRiM[job]);
+		}*/
+
+		/*printf("machine = %u\n",machine);
+		for(int job=0;job<NbJobs;job++){
+			printf("riAV = %u\n",triRi[machine][job]);
+		}*/
+
+		// tri du tableau
+		//printf("machine = %u\n",machine);
+		std::sort(std::begin(triRi[machine]),std::begin(triRi[machine])+NbJobs);
+		/*for(int job=0;job<NbJobs;job++){
+			printf("riAPP = %u\n",triRi[machine][job]);
+		}*/
+		
+	}
+	
 	// pour chaque machine
 	for(int machine=0;machine<NbMaxMachine;machine++){
 		//pour chaque position
 		for(int posi=0;posi<NbJobs;posi++){
 			// pour chaque i
-			for(int i=0;i<NbJobs;i++){
-				if(reference[machine][i][1] == triRi[machine][posi]){
-					pos[machine][reference[machine][i][0]] = posi;
+			for(int job=0;job<NbJobs;job++){
+				//printf("machine: %u positionTab: %u job : %u\n", machine, posi, job);
+				if(reference[machine][job][1] == triRi[machine][posi]){
+					pos[machine][reference[machine][job][0]] = posi;
+					//printf("position: %u\n", pos[machine][reference[machine][job][0]]);
 				}
 			}
+		}
+	}
+
+	for(int machine=0;machine<NbMaxMachine;machine++){
+		//pour chaque position
+		for(int i=0;i<NbJobs;i++){
+			//printf("job : %u Ri : %u\n",reference[machine][i][0], reference[machine][i][1]);
+			//printf("machine : %u posi : %u job : %u\n",machine, pos[machine][reference[machine][i][0]], i);
 		}
 	}
 
@@ -479,7 +509,7 @@ int ordoSansMinCr(int jMinCr, int *jobsRetires,int nbJobRet){
 				}
 			}
 			
-
+			//printf("machine : %u position : %u job suivant : %u\n",machine, posi, jobSuivant);
 			/** recherche de la position du job dans sa gamme **/
 			for(int ope = 0; ope<NbMaxMachine; ope++){
 				if(gamme(jobSuivant,ope)==machine){
@@ -508,7 +538,7 @@ int ordoSansMinCr(int jMinCr, int *jobsRetires,int nbJobRet){
 			}
 			
 			CiJobSuivant= CiJobAvant + pi(machine,jobSuivant);
-
+			//printf("job = %u machine = %u Cijobsuiva = %u\n",jobSuivant,machine, CiJobSuivant);
 			if(operation == 0){
 				// si riSuiv - piMin > riG
 				if(CiJobAvant > riG(jobSuivant)){
@@ -537,6 +567,14 @@ int ordoSansMinCr(int jMinCr, int *jobsRetires,int nbJobRet){
 	for(int jobRet = 0; jobRet<NbJobs; jobRet++){
 		printf("%u\n",jobsRetires[jobRet]);
 	}*/
+	/*	printf("ordominCr \n");
+		for(int j=0;j<NbMachines;j++){
+			for(int i = 0;i<NbJobs ;i++){
+				printf("ri, di, pi, Ci %ld | %ld | %ld | %ld |",ri(j,i), di(j,i), pi(j,i), Ci(j,i));
+				printf(" \n");
+			}
+			printf(" \n");
+		}*/
 
 	jobsRetires[nbJobRet]=jMinCr;
 	//nbJobRet=nbJobRet+1;
@@ -561,9 +599,12 @@ void calculDate(int jMinCr, int *jobsRetires, int nbJobRet){
 		reference[i][0]=i;
 		reference[i][1]=sommePIJ[i];
 	}
-
+	
+		
 	// tri du tableau
 	std::sort(std::begin(sommePIJ),std::end(sommePIJ));
+	
+		
 
 	int nombreMachines = NbMachines;
 	int nbMOrdo = 0;
@@ -762,7 +803,7 @@ void miseAJourDecision(int jMinCr,int *jobsRetires, int nbJobRet){
 	int riSuivant1 = 0;
 
 	// pour chaque machine
-	int triRi1[NbMaxMachine][NbMaxJob];
+	unsigned int triRi1[NbMaxMachine][NbMaxJob];
 	int reference1[NbMaxMachine][NbMaxJob][2];
 	int pos1[NbMaxMachine][NbMaxJob];
 
@@ -772,7 +813,13 @@ void miseAJourDecision(int jMinCr,int *jobsRetires, int nbJobRet){
 			reference1[machine][job][1]=triRi1[machine][job];
 			reference1[machine][job][0]=job;
 		}
-		std::sort(std::begin(triRi1[machine]),std::end(triRi1[machine]));
+		/*for(int k =0; k<NbJobs; k++){
+			printf("riA: %u\n",triRi1[machine][k]);
+		}*/
+		std::sort(std::begin(triRi1[machine]),std::begin(triRi1[machine])+NbJobs);
+		/*for(int k =0; k<NbJobs; k++){
+			printf("riAP: %u\n",triRi1[machine][k]);
+		}*/
 	}
 
 
@@ -869,7 +916,7 @@ void miseAJourDecision(int jMinCr,int *jobsRetires, int nbJobRet){
 
 
 //int *** priseDeDecision1(){
-void priseDeDecision1(int *jobsRetires, int nbJobRet){
+int priseDeDecision1(int *jobsRetires, int nbJobRet){
 	
 	/*** CREATION DES CONTRAINTES DE PRECEDENCES ***/
 	int listePrecedent[NbMaxJob][NbMaxMachine][6];
@@ -908,7 +955,7 @@ void priseDeDecision1(int *jobsRetires, int nbJobRet){
 	// Contrainte d'ordonnancement
 
 	// Recherche de la position du job sur la machine
-	int triRiMachine[NbMaxMachine][NbMaxJob];
+	unsigned int triRiMachine[NbMaxMachine][NbMaxJob];
 	int referenceMachine[NbMaxMachine][NbMaxJob][2];
 	int posMachine[NbMaxMachine][NbMaxJob];
 
@@ -918,7 +965,7 @@ void priseDeDecision1(int *jobsRetires, int nbJobRet){
 			referenceMachine[machine][job][0]=job;
 			referenceMachine[machine][job][1]=triRiMachine[machine][job];
 		}
-		std::sort(std::begin(triRiMachine[machine]),std::end(triRiMachine[machine]));
+		std::sort(std::begin(triRiMachine[machine]),std::begin(triRiMachine[machine])+NbJobs);
 	}
 
 
@@ -1147,21 +1194,24 @@ void priseDeDecision1(int *jobsRetires, int nbJobRet){
 		
 		// Verifier que le job n'est pas déja supprimer
 		for(int jobR=0; jobR<nbJobRet; jobR++){
-		printf("job : %u et TabjobR: %u \n", job, jobsRetires[jobR]);
+		//printf("job : %u et TabjobR: %u \n", job, jobsRetires[jobR]);
 			if(job == jobsRetires[jobR]){
-				printf("job ret \n\n");
+				//printf("job ret \n\n");
 				retire = true; 
 			}
 		}
-		printf("jobs retires deb priseDec\n");
+		/*printf("jobs retires deb priseDec\n");
 		for(int jobRet = 0; jobRet<NbJobs; jobRet++){
 			printf("%u\n",jobsRetires[jobRet]);
-		}
+		}*/
 		printf("nombre de job retirés = %u \n", nbJobRet);
 		// si le job est en retard
 		if(ciJob>diJob && retire == false){
 			printf("job en retard = %u\n",job);
 			int tabSommeDuree[NbMaxJob];
+			for(int job=0; job<NbJobs; job++){
+				tabSommeDuree[job]=0;
+			}
 			int machine1 = gamme(job,NbMaxMachine-1);
 			int machine2 = 0;
 			int minCoutR = 99999;
@@ -1183,7 +1233,7 @@ void priseDeDecision1(int *jobsRetires, int nbJobRet){
 				if(tabSommeDuree[jobTab]>tabSommeDuree[jobMaxSommeDi]){
 					jobMaxSommeDi = jobTab;
 				}
-				//printf(" sommeDi du job %u = %u\n", jobTab, tabSommeDuree[jobTab]);
+				printf(" sommeDi du job %u = %u\n", jobTab, tabSommeDuree[jobTab]);
 			}
 			int jobMinCr = 0;
 			for(int jobTab=0;jobTab<NbJobs;jobTab++){
@@ -1193,7 +1243,10 @@ void priseDeDecision1(int *jobsRetires, int nbJobRet){
 			}
 			printf(" job min cout rejet = %u CR = %u\n", jobMinCr, coutR(jobMinCr));
 			printf(" job max somme Di = %u Di = %u\n",jobMaxSommeDi, tabSommeDuree[jobMaxSommeDi]);
+			// On prend min CR
 			int nbJobSupp = ordoSansMinCr(jobMinCr,jobsRetires,nbJobRet);
+			// On prend max SommeDI
+			//int nbJobSupp = ordoSansMinCr(jobMaxSommeDi,jobsRetires,nbJobRet);
 			printf("resultat ordoSansMin = %u\n",nbJobSupp); 
 			nbJobRet = nbJobSupp;
 			printf("resultat nbJobRet  = %u\n\n",nbJobRet); 
@@ -1225,6 +1278,7 @@ void priseDeDecision1(int *jobsRetires, int nbJobRet){
 			}*/
 		}
 	}
+	return nbJobRet;
 }
 
 void recherche(int *** prec){
@@ -1315,14 +1369,14 @@ void main(void)
 	
 	//printf("fin jobshop !!!");
 	/* Affichage de mise a jour résultat jobshop **/
-/*	printf("Mise a jour résultat jobshop \n");
+	printf("Mise a jour résultat jobshop \n");
 	for(int j=0;j<NbMachines;j++){
 		for(int i = 0;i<NbJobs ;i++){
 			printf("ri, di, pi, Ci %ld | %ld | %ld | %ld |",ri(j,i), di(j,i), pi(j,i), Ci(j,i));
 			printf(" \n");
 		}
 		printf(" \n");
-	}*/
+	}
 	
 	int* jobRetires;
 	jobRetires = (int*) malloc(sizeof(int) * NbJobs);
@@ -1349,11 +1403,12 @@ void main(void)
 
 	int nbIte = 0;
 	bool dejaRetire = false;
-	while(nbIte<NbJobs && enRetard == true){
+	int nbTravSupp = 0;
+	while(nbIte<NbJobs && enRetard==true){
 		/** Execution prise de décision **/
 		printf("entree dans la boucle");
-		priseDeDecision1(jobRetires,nbJobRetire);
-
+		nbTravSupp = priseDeDecision1(jobRetires,nbJobRetire);
+		nbJobRetire=nbTravSupp;
 		/** Affichage de résultat la prise de décision **/
 		printf("nouvelleOrdo \n");
 		for(int j=0;j<NbMachines;j++){
@@ -1373,22 +1428,31 @@ void main(void)
 
 		enRetard = false;
 		dejaRetire = false;
+		
 		for(int job=0;job<NbJobs;job++){
+			dejaRetire = false;
 			// on verifie si le job est déja supprimé
 			for(int jobR=0;jobR<NbJobs;jobR++){
 				if(job == jobRetires[jobR]){
 					dejaRetire = true;
+					//printf("job déja retire = %u \n",job);
 				}
 			}
 			
 			ciJob = Ci(gamme(job,NbMaxMachine-1),job);
 			diJob = diG(job);
+			//printf("job = %u Ci = %u di = %u \n",job, ciJob, diJob);
 			// si le job est en retard
+			if(dejaRetire==false){
+				printf("job NON retires = %u \n",job);
+			}
 			if(ciJob>diJob && dejaRetire==false){
 				enRetard = true;
+				//printf("job en retard = %u \n",job);
 			}
 		}
 		nbIte++;
+		printf("nb ite = %u nbjob = %u \n", nbIte,NbJobs); 
 	}
 	//system("PAUSE");
 }
